@@ -20,4 +20,5 @@ void CApp::OnMenu() {
 int main() {
     CApp TheApp;
     TheApp.OnMenu();
+    return 0;
 }

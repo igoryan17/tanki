@@ -11,7 +11,7 @@
 class CApp {
 private:
     bool mRunning = false;
-    CMenu mMenu = CMenu();
+    CMenu mMenu;
 public:
     CApp();
 

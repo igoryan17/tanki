@@ -53,3 +53,7 @@ CWindow::CWindow(std::string title, int x, int y, int width, int height, Uint32 
         CMyErrorShow::show("SDL_CreateRenderer");
     }
 }
+
+CWindow::~CWindow() {
+
+}
