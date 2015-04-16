@@ -12,10 +12,11 @@ class CApp {
 private:
     bool mRunning = false;
     CMenu *mMenu = nullptr;
+    float mScale = 1;
 public:
     CApp();
     ~CApp();
-    void OnMenu();
+    void OnMenu(int width, int height);
 };
 
 

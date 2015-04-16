@@ -2,13 +2,26 @@
 // Created by igoryan on 15.04.15.
 //
 
-#include "CMenu.h"
-#include "CLoadMedia.h"
-
 CMenu::CMenu() : CWindow() {
     mTextMenu[new_game] = "New Game";
     mTextMenu[out] = "out";
-    mPathToBackground = "menu_background.jpg";
+    mPathToBackground = "menu_images/menu_background.jpg";
+    SDL_Surface *loaded = CLoadMedia::LoadJPG(mPathToBackground);
+    SDL_Texture *mBackground = SDL_CreateTextureFromSurface(mRender, loaded);
+    SDL_FreeSurface(loaded);
+    SDL_RenderClear(mRender);
+    SDL_RenderCopy(mRender, mBackground, NULL, NULL);
+}
+
+CMenu::CMenu(int x, int y, int width, int height, Uint32 flags) : CWindow("316 panzers",
+                                                                          x,
+                                                                          y,
+                                                                          width,
+                                                                          height,
+                                                                          flags) {
+    mTextMenu[new_game] = "New Game";
+    mTextMenu[out] = "out";
+    mPathToBackground = "menu_images/menu_background.jpg";
     SDL_Surface *loaded = CLoadMedia::LoadJPG(mPathToBackground);
     SDL_Texture *mBackground = SDL_CreateTextureFromSurface(mRender, loaded);
     SDL_FreeSurface(loaded);

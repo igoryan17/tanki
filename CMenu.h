@@ -19,10 +19,11 @@ private:
     };
     SDL_Texture *mBackground = nullptr;
     std::string mTextMenu[out];
-    std::string mGameName;
+    std::string mGameName = "316 Panzers";
     std::string mPathToBackground;
 public:
     CMenu();
+    CMenu(int x, int y, int width, int height, Uint32 flags);
     void show_window();
     virtual ~CMenu();
     friend class CApp;

@@ -5,15 +5,24 @@
 #ifndef TANKI_CMYERRORSHOW_H
 #define TANKI_CMYERRORSHOW_H
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 class CMyErrorShow {
 public:
     static void show_error(std::string name_function) {
+        const std::string err = "Error " + name_function + ":";
         if (name_function.find("SDL") != std::string::npos) {
-            std::cout << "Error " << name_function << ":" << SDL_GetError() << std::endl;
+            std::cout << err << SDL_GetError() << std::endl;
         }
+
         if (name_function.find("IMG") != std::string::npos) {
-            std::cout << "Error " << name_function << ":" << IMG_GetError() << std::endl;
+            std::cout << err << IMG_GetError() << std::endl;
+        }
+
+        if (name_function.find("Mix") != std::string::npos) {
+            std::cout << err << Mix_GetError() << std::endl;
         }
     }
 };
