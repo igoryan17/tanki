@@ -2,8 +2,8 @@
 // Created by igoryan on 15.04.15.
 //
 
-#ifndef TANKS_CWINDOW_H
-#define TANKS_CWINDOW_H
+#ifndef TANKI_CWINDOW_H
+#define TANKI_CWINDOW_H
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_surface.h>

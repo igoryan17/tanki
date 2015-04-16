@@ -2,8 +2,8 @@
 // Created by igoryan on 15.04.15.
 //
 
-#ifndef TANKS_CINITRESOURCES_H
-#define TANKS_CINITRESOURCES_H
+#ifndef TANKI_CINITRESOURCES_H
+#define TANKI_CINITRESOURCES_H
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

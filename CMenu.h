@@ -2,12 +2,14 @@
 // Created by igoryan on 15.04.15.
 //
 
-#ifndef TANKS_CMENU_H
-#define TANKS_CMENU_H
+#ifndef TANKI_CMENU_H
+#define TANKI_CMENU_H
 
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "CWindow.h"
+#include "CApp.h"
+#include "CLoadMedia.h"
 
 class CMenu : public CWindow {
 private:
@@ -22,7 +24,7 @@ public:
     CMenu();
     void show_window();
     virtual ~CMenu();
+    friend class CApp;
 };
-
 
 #endif //TANKS_CMENU_H

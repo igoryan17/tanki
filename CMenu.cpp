@@ -5,8 +5,7 @@
 #include "CMenu.h"
 #include "CLoadMedia.h"
 
-CMenu::CMenu() {
-    CWindow();
+CMenu::CMenu() : CWindow() {
     mTextMenu[new_game] = "New Game";
     mTextMenu[out] = "out";
     mPathToBackground = "menu_background.jpg";
@@ -18,3 +17,10 @@ CMenu::CMenu() {
 CMenu::~CMenu() {
 
 }
+
+void CMenu::show_window() {
+    SDL_RenderClear(mRender);
+    SDL_RenderPresent(mRender);
+}
+
+#include "CWindow.cpp"
