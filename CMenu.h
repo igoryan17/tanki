@@ -17,6 +17,7 @@ private:
         new_game,
         out
     };
+    SDL_Texture *mBackground = nullptr;
     std::string mTextMenu[out];
     std::string mGameName;
     std::string mPathToBackground;

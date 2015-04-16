@@ -6,9 +6,9 @@
 
 CApp::CApp() {
     mRunning = true;
-    mMenu = new CMenu();
-    CInitResources::IMG(IMG_INIT_JPG);
     CInitResources::SDL(SDL_INIT_VIDEO);
+    CInitResources::IMG(IMG_INIT_JPG);
+    mMenu = new CMenu();
 }
 
 void CApp::OnMenu() {

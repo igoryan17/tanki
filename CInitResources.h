@@ -13,6 +13,7 @@ enum MyFlag {
     not_init = false,
     init = true
 };
+
 class CInitResources {
 private:
     static MyFlag mSDL;
@@ -21,20 +22,20 @@ public:
     CInitResources();
 
     static void SDL(Uint32 flags) {
-        if (IMG_Init(flags) & flags != flags) {
-            std::cout << "Error IMG_Init:" << IMG_GetError() << std::endl;
+        if (SDL_Init(flags) < 0) {
+            CMyErrorShow::show_error("SDL_Init");
         }
         else {
-            mIMG = init;
+            mSDL = init;
         }
     }
 
     static void IMG(int flags) {
-        if (SDL_Init(flags) != 0) {
-            std::cout << "Error SDL_Init:" << SDL_GetError() << std::endl;
+        if (!(IMG_Init(flags) & flags)) {
+            CMyErrorShow::show_error("IMG_Init");
         }
         else {
-            mSDL = init;
+            mIMG = init;
         }
     }
 };
