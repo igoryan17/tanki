@@ -10,15 +10,16 @@
 #include <SDL2/SDL_thread.h>
 #include <thread>
 
-typedef std::thread MyThread;
+typedef SDL_Thread MyThread;
 class CApp {
 private:
     bool mRunning = false;
+    bool mFlagThread = true;
     CMenu *mMenu = nullptr;
     float mScale = 1;
     resolution mResolution;
-    MyThread *mGPU = nullptr;
-    MyThread *mEngine = nullptr;
+    static MyThread *mGPU;
+    static MyThread *mEngine;
 public:
     int mArgc;
     char** mArgv;
@@ -32,7 +33,18 @@ public:
     void ChooseScreenResolution();
     void CallEngine();
     void CallGPU();
+    static void ThreadGPU(void* data) {
+        CMenu *ptr = static_cast<CMenu*>(data);
+        return ptr->show_window();
+    }
+    static void ThreadEngine(void* data) {
+        CApp *ptr = static_cast<CApp*>(data);
+        return ptr->OnMenu();
+    }
     void wait();
     void join();
 };
+
+MyThread* CApp::mGPU = nullptr;
+MyThread* CApp::mEngine = nullptr;
 #endif //SDL_EXAMPLES_CAPP_H

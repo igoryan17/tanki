@@ -96,18 +96,23 @@ void CApp::OnMenu() {
 }
 
 void CApp::CallGPU() {
-    std::thread *GPU = new std::thread(std::bind(&CMenu::show_window, mMenu));
-    mGPU = GPU;
+    if (mFlagThread) {
+        mGPU = SDL_CreateThread((SDL_ThreadFunction) ThreadGPU, "GPU", mMenu);
+    }
 }
 
 void CApp::CallEngine() {
-    std::thread *Engine = new std::thread(std::bind(&CApp::OnMenu, this));
-    mEngine = Engine;
+    if (mFlagThread) {
+        mEngine = SDL_CreateThread((SDL_ThreadFunction) ThreadEngine, "Engine", this);
+    }
+    else {
+        OnMenu();
+    }
 }
 
 void CApp::join() {
-    mEngine->join();
-    mGPU->join();
+    SDL_WaitThread(mEngine, NULL);
+    SDL_WaitThread(mGPU, NULL);
 }
 
 CApp::~CApp() {
