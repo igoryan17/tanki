@@ -3,8 +3,8 @@
 //
 
 #include "CApp.h"
-#include <iostream>
-#include <vector>
+#include <cstdlib>
+#include <cstring>
 #include <SDL2/SDL_video.h>
 
 CApp::CApp() {
@@ -13,10 +13,61 @@ CApp::CApp() {
     CInitResources::IMG(IMG_INIT_JPG);
 }
 
-void CApp::OnMenu(int width, int height) {
-    if (width > 0 && height > 0) {
-        mMenu = new CMenu(0, 0, width, height, SDL_WINDOW_SHOWN);
-        mScale = (float) height / 480;
+void CApp::ChooseScreenResolution() {
+    resolution res;
+    SDL_DisplayMode mode;
+    if (mArgc == 2) {
+        if (SDL_GetCurrentDisplayMode(0, &mode) != 0) {
+            CMyErrorShow::show_error("SDL_GetCurrentDisplayMode");
+            mResolution = res;
+            return;
+        }
+    }
+    char *ptr = nullptr;
+    switch(mArgc) {
+        case 1:
+            res.Width = 640;
+            res.Height = 480;
+            mResolution = res;
+            return;
+        case 2:
+            if (strcmp("-f", mArgv[1]) != 0) {
+                std::cout << "doesn't know parametr:" << mArgv[1] << std::endl;
+                mResolution = res;
+                return;
+            }
+            res.Width = mode.w;
+            res.Height = mode.h;
+            mResolution = res;
+            return;
+        case 3:
+            if (strcmp("-u", mArgv[1]) != 0) {
+                std::cout << "doesn't know parametr:" << mArgv[1] << std::endl;
+            }
+            res.Width = atoi(mArgv[2]);
+            ptr = strchr(mArgv[2], 'x');
+            if (ptr == nullptr) {
+                res.Width = 0;
+                res.Height = 0;
+                mResolution = res;
+                return;
+            }
+            res.Height = atoi(ptr);
+            mResolution = res;
+            return;
+        default:
+            res.Width = 0;
+            res.Height = 0;
+            mResolution = res;
+            return;
+    }
+}
+
+void CApp::OnMenu() {
+    resolution res = mResolution;
+    if (res.Width > 0 && res.Height > 0) {
+        mMenu = new CMenu(0, 0, res.Width, res.Height, SDL_WINDOW_SHOWN);
+        mScale = (float) res.Height / 480;
         std::cout << "Scale:" << mScale << std::endl;
     }
     else {
@@ -33,13 +84,30 @@ void CApp::OnMenu(int width, int height) {
     //end initialization music
     SDL_Event Event;
     while (mRunning) {
+        mMenu->mMutexRender.lock();
         while (SDL_PollEvent(&Event) != 0) {
             if (Event.type == SDL_QUIT) {
                 mRunning = false;
+                SDL_DestroyRenderer(mMenu->mRender);
             }
-            mMenu->show_window();
         }
+        mMenu->mMutexRender.unlock();
     }
+}
+
+void CApp::CallGPU() {
+    std::thread *GPU = new std::thread(std::bind(&CMenu::show_window, mMenu));
+    mGPU = GPU;
+}
+
+void CApp::CallEngine() {
+    std::thread *Engine = new std::thread(std::bind(&CApp::OnMenu, this));
+    mEngine = Engine;
+}
+
+void CApp::join() {
+    mEngine->join();
+    mGPU->join();
 }
 
 CApp::~CApp() {
@@ -48,112 +116,13 @@ CApp::~CApp() {
 
 int main(int argc, char *argv[]) {
     CApp TheApp;
-    // see user arguments
-    auto lambda = [](int width, int height) -> void {
-        std::cout << "Width:" << width << " Height:" << height << std::endl;
-    };
-    const float W = 4.0;
-    const float H = 3.0;
-    enum screen_resolution {
-        Width = 0,
-        Height = 1,
-        Count = 2
-    };
-    struct resolution {
-        int res[Count];
-    };
-    std::vector<resolution> resolutions;
-    resolution res;
-
-    res.res[Width] = 800;
-    res.res[Height] = 600;
-    resolutions.push_back(res);
-
-    res.res[Width] = 1024;
-    res.res[Height] = 768;
-    resolutions.push_back(res);
-
-    res.res[Width] = 1152;
-    res.res[Height] = 864;
-    resolutions.push_back(res);
-
-    res.res[Width] = 1280;
-    res.res[Height] = 960;
-    resolutions.push_back(res);
-
-    res.res[Width] = 1400;
-    res.res[Height] = 1050;
-    resolutions.push_back(res);
-
-    res.res[Width] = 1600;
-    res.res[Height] = 1200;
-    resolutions.push_back(res);
-
-    std::vector<resolution>::iterator i = resolutions.begin();
-    const float aspect_ratio = W / H;
-    float epsilon = 0.0000001;
-    int width = 0;
-    int height = 0;
-    switch (argc) {
-        case 1:
-            TheApp.OnMenu(0, 0);
-            break;
-        case 2:
-            if (strcmp(argv[1], "-f") != 0) {
-                return 1;
-            }
-            SDL_DisplayMode mode;
-            if (SDL_GetCurrentDisplayMode(0, &mode) != 0) {
-                CMyErrorShow::show_error("SDL_GetCurrentDisplayMode");
-                return 1;
-            }
-            for (i = resolutions.begin(); i < resolutions.end(); i++) {
-                if ((*i).res[Width] <= mode.w && (*i).res[Height] <= mode.h) {
-                    width = (*i).res[Width];
-                    height = (*i).res[Height];
-                }
-                else {
-                    i = resolutions.end();
-                }
-            }
-            lambda(width, height);
-            TheApp.OnMenu(width, height);
-            break;
-        case 4:
-            width = atoi(argv[1]);
-            if (width == 0) {
-                std::cout << "Error read width" << std::endl;
-                TheApp.OnMenu(0, 0);
-                break;
-            }
-            if (strcmp(argv[2], "x") != 0) {
-                std::cout << "Error read symbol 'x'" << std::endl;
-                lambda(640, 480);
-                TheApp.OnMenu(0, 0);
-                break;
-            }
-            height = atoi(argv[3]);
-            if (height == 0) {
-                std::cout << "Error read height" << std::endl;
-                lambda(640, 480);
-                TheApp.OnMenu(0, 0);
-                break;
-            }
-            if ((((float) width / (float) height) - aspect_ratio) < epsilon) {
-                lambda(width, height);
-                TheApp.OnMenu(width, height);
-            }
-            else {
-                std::cout << "Error choose screen ratio must be" << W << "/" << H << std::endl;
-                lambda(640, 480);
-                TheApp.OnMenu(0, 0);
-                break;
-            }
-            break;
-        default:
-            lambda(640, 480);
-            TheApp.OnMenu(0, 0);
-    }
+    TheApp.mArgc = argc;
+    TheApp.mArgv = argv;
+    TheApp.ChooseScreenResolution();
+    TheApp.CallEngine();
+    TheApp.waitMenuCreate();
+    TheApp.CallGPU();
+    TheApp.join();
     return 0;
 }
 

@@ -8,15 +8,39 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_surface.h>
 #include <bits/stringfwd.h>
+#include <vector>
+#include <iostream>
+#include "CApp.h"
+
+struct resolution {
+    unsigned int Width = 0;
+    unsigned int Height  = 0;
+    resolution() : Width(640), Height(480) {}
+    resolution(const resolution & obj) {
+        Width = obj.Width;
+        Height = obj.Height;
+    }
+    friend std::ostream& operator<< (std::ostream& os, const resolution res);
+};
+std::ostream& operator<< (std::ostream& os, const resolution res) {
+    os << res.Width << "x" << res.Height;
+    return os;
+}
 
 class CWindow {
 protected:
-    const int SCREEN_WIDTH;
-    const int SCREEN_HEIGHT;
+    unsigned int SCREEN_WIDTH;
+    unsigned int SCREEN_HEIGHT;
     SDL_Window *mWindow = nullptr;
     SDL_Surface *mScreen = nullptr;
     SDL_Renderer *mRender = nullptr;
+    const float mRatio;
+    const float mEpsilon;
+private:
+    std::vector<resolution> mResolutions;
 public:
+    void InitializationResolutions();
+    void SetResolution(unsigned int w, unsigned int h);
     CWindow();
     CWindow(std::string title, int Width, int Height, Uint32 flags);
     CWindow(std::string title, int x, int y, int width, int height, Uint32 flags);

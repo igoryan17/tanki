@@ -10,17 +10,22 @@
 #include "CWindow.h"
 #include "CApp.h"
 #include "CLoadMedia.h"
+#include <mutex>
 
 class CMenu : public CWindow {
 private:
     enum Menu{
-        new_game,
-        out
+        play = 0,
+        options = 1,
+        credits = 2,
+        exit = 3,
+        count = 4
     };
     SDL_Texture *mBackground = nullptr;
-    std::string mTextMenu[out];
     std::string mGameName = "316 Panzers";
     std::string mPathToBackground;
+    std::string mTexts[count] = {"play", "options", "creits", "exit"};
+    std::mutex mMutexRender;
 public:
     CMenu();
     CMenu(int x, int y, int width, int height, Uint32 flags);
