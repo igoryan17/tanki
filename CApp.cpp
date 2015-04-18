@@ -79,9 +79,6 @@ void CApp::OnMenu() {
             if (Event.type == SDL_QUIT) {
                 mRunning = false;
                 mMenu->mFlagGPU = false;
-                mMenu->mMutexRender.lock();
-                SDL_DestroyRenderer(mMenu->mRender);
-                mMenu->mMutexRender.unlock();
             }
         }
     }
@@ -111,6 +108,7 @@ void CApp::join() {
 }
 
 CApp::~CApp() {
+    SDL_Quit();
     delete mMenu;
 }
 

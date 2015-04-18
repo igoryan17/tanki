@@ -11,6 +11,7 @@
 #include <vector>
 #include <iostream>
 #include "CApp.h"
+#include "cleanup.h"
 
 struct resolution {
     unsigned int Width;
@@ -33,7 +34,6 @@ protected:
     unsigned int SCREEN_WIDTH;
     unsigned int SCREEN_HEIGHT;
     SDL_Window *mWindow = nullptr;
-    SDL_Surface *mScreen = nullptr;
     SDL_Renderer *mRender = nullptr;
     const float mRatio;
     const float mEpsilon;

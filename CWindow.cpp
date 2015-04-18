@@ -10,16 +10,14 @@ CWindow::CWindow() : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsi
     mWindow = SDL_CreateWindow("316 panzers", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (mWindow == nullptr) {
         CMyErrorShow::show_error("SDL_CreateWindow");
+        SDL_Quit();
     }
 
-    mScreen = SDL_GetWindowSurface(mWindow);
-    if (mScreen == nullptr) {
-        CMyErrorShow::show_error("SDL_GetWindowSurface");
-    }
-
-    mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
+    mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
         CMyErrorShow::show_error("SDL_CreateRenderer");
+        cleanup(mWindow);
+        SDL_Quit();
     }
 }
 
@@ -29,16 +27,14 @@ CWindow::CWindow(std::string title, int Width, int Height, Uint32 flags) : mRati
     mWindow = SDL_CreateWindow(title.c_str(), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
     if (mWindow == nullptr) {
         CMyErrorShow::show_error("SDL_CreateWindow");
+        SDL_Quit();
     }
 
-    mScreen = SDL_GetWindowSurface(mWindow);
-    if (mScreen == nullptr) {
-        CMyErrorShow::show_error("SDL_GetWindowSurface");
-    }
-
-    mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
+    mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
         CMyErrorShow::show_error("SDL_CreateRenderer");
+        cleanup(mWindow);
+        SDL_Quit();
     }
 }
 
@@ -49,16 +45,14 @@ CWindow::CWindow(std::string title, int x, int y, int width, int height, Uint32 
     mWindow = SDL_CreateWindow(title.c_str(), x, y, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
     if (mWindow == nullptr) {
         CMyErrorShow::show_error("SDL_CreateWindow");
+        SDL_Quit();
     }
 
-    mScreen = SDL_GetWindowSurface(mWindow);
-    if (mScreen == nullptr) {
-        CMyErrorShow::show_error("SDL_GetWindowSurface");
-    }
-
-    mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
+    mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
         CMyErrorShow::show_error("SDL_CreateRenderer");
+        cleanup(mWindow);
+        SDL_Quit();
     }
 }
 
@@ -124,5 +118,5 @@ void CWindow::SetResolution(unsigned int w, unsigned int h) {
 }
 
 CWindow::~CWindow() {
-
+    cleanup(mRender, mWindow);
 }

@@ -9,7 +9,9 @@ CMenu::CMenu() : CWindow() {
     SDL_Texture *mBackground = CTexture::LoadTexture(mPathToBackground, JPG, mRender);
     mMutexRender.lock();
     SDL_RenderClear(mRender);
-    SDL_RenderCopy(mRender, mBackground, NULL, NULL);
+    if (SDL_RenderCopy(mRender, mBackground, nullptr, nullptr) != 0) {
+        CMyErrorShow::show_error("SDL_RenderCopy");
+    }
     mMutexRender.unlock();
 }
 
@@ -23,7 +25,7 @@ CMenu::CMenu(int x, int y, int width, int height, Uint32 flags) : CWindow("316 p
     SDL_Texture *mBackground = CTexture::LoadTexture(mPathToBackground, JPG, mRender);
     mMutexRender.lock();
     SDL_RenderClear(mRender);
-    SDL_RenderCopy(mRender, mBackground, NULL, NULL);
+    SDL_RenderCopy(mRender, mBackground, nullptr, nullptr);
     mMutexRender.unlock();
 }
 
@@ -37,7 +39,7 @@ void CMenu::show() {
 }
 
 CMenu::~CMenu() {
-
+    cleanup(mBackground);
 }
 
 #include "CWindow.cpp"
