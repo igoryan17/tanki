@@ -7,8 +7,8 @@
 
 CApp::CApp() {
     mRunning = true;
-    CInitResources::SDL(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    CInitResources::IMG(IMG_INIT_JPG);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    IMG_Init(IMG_INIT_JPG);
 }
 
 void CApp::ChooseScreenResolution() {
@@ -20,7 +20,7 @@ void CApp::ChooseScreenResolution() {
         }
     }
     char *ptr = nullptr;
-    switch(mArgc) {
+    switch (mArgc) {
         case 1:
             return;
         case 2:
@@ -28,21 +28,21 @@ void CApp::ChooseScreenResolution() {
                 std::cout << "doesn't know parametr:" << mArgv[1] << std::endl;
                 return;
             }
-            mResolution.Width = mode.w;
-            mResolution.Height = mode.h;
+            mResolution.Width = static_cast<unsigned int>(mode.w);
+            mResolution.Height = static_cast<unsigned int>(mode.h);
             return;
         case 3:
             if (strcmp("-u", mArgv[1]) != 0) {
                 std::cout << "doesn't know parametr:" << mArgv[1] << std::endl;
             }
-            mResolution.Width = atoi(mArgv[2]);
+            mResolution.Width = static_cast<unsigned int>(atoi(mArgv[2]));
             ptr = strchr(mArgv[2], 'x');
             if (ptr == nullptr) {
                 mResolution.Width = 0;
                 mResolution.Height = 0;
                 return;
             }
-            mResolution.Height = atoi(ptr);
+            mResolution.Height = static_cast<unsigned int>(atoi(ptr));
             return;
         default:
             mResolution.Width = 0;
@@ -54,13 +54,9 @@ void CApp::ChooseScreenResolution() {
 void CApp::OnMenu() {
     if (mResolution.Width > 0 && mResolution.Height > 0) {
         mMenu = new CMenu(0, 0, mResolution.Width, mResolution.Height, SDL_WINDOW_SHOWN);
-        mScale = (float) mResolution.Height / 480;
-        std::cout << "Scale:" << mScale << std::endl;
     }
     else {
         mMenu = new CMenu();
-        mScale = 1;
-        std::cout << "Scale:" << mScale << std::endl;
     }
     //turn on music
     /*
@@ -73,10 +69,13 @@ void CApp::OnMenu() {
     Mix_PlayMusic(tap, 1);
      */
     //end initialization music
+    while(!mMenu->mFlagGPU);
+    CallGPU();
     SDL_Event Event;
     while (mRunning) {
         while (SDL_PollEvent(&Event) != 0) {
             if (Event.type == SDL_QUIT) {
+                std::cout << "Exit\n";
                 mRunning = false;
                 mMenu->mFlagGPU = false;
             }
@@ -118,10 +117,6 @@ int main(int argc, char *argv[]) {
     TheApp.mArgv = argv;
     TheApp.ChooseScreenResolution();
     TheApp.CallEngine();
-    TheApp.waitMenuCreate();
-    TheApp.CallGPU();
     TheApp.join();
     return 0;
 }
-
-#include "CMenu.cpp"

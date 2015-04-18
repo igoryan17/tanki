@@ -15,7 +15,14 @@ endif()
 
 set(SOURCE_FILES CApp.cpp)
 
-add_executable(tanki ${SOURCE_FILES})
+add_executable(tanki ${SOURCE_FILES} CApp.cpp CApp.h
+									CInitResources.cpp CInitResources.h
+									cleanup.h
+									CLoadMedia.cpp CLoadMedia.h
+									CMenu.cpp CMenu.h
+									CMyErrorShow.cpp CMyErrorShow.h
+									CTexture.cpp CTexture.h
+									CWindow.cpp CWindow.h)
 
 #target_link_libraries(SDL_examples ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY})
 

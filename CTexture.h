@@ -9,6 +9,7 @@
 #include <SDL2/SDL_render.h>
 #include "CLoadMedia.h"
 #include "CMyErrorShow.h"
+#include "cleanup.h"
 
 enum type {
     BMP,
@@ -17,11 +18,16 @@ enum type {
 };
 class CTexture {
 private:
+    SDL_Texture *mTexture = nullptr;
 public:
-    static SDL_Texture *LoadTexture(std::string path, int flag, SDL_Renderer *render);
+    CTexture() {}
+    ~CTexture();
+    CTexture(std::string path, SDL_Renderer *render, int flag);
+    void RenderTexture(SDL_Renderer *ren, int x, int y);
+    static SDL_Texture* LoadTexture(std::string path, SDL_Renderer *render, int flag);
 };
 
-SDL_Texture * CTexture::LoadTexture(std::string path, int flag, SDL_Renderer *render) {
+SDL_Texture* CTexture::LoadTexture(std::string path, SDL_Renderer *render, int flag) {
     SDL_Surface *Load = nullptr;
     switch (flag) {
         case BMP:
@@ -34,7 +40,6 @@ SDL_Texture * CTexture::LoadTexture(std::string path, int flag, SDL_Renderer *re
             Load = CLoadMedia::LoadPNG(path);
             break;
         default:
-            Load = nullptr;
             std::cout << "Error load flag\n";
             return nullptr;
     }

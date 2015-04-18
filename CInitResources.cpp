@@ -4,6 +4,3 @@
 #include "CInitResources.h"
 #include "CMyErrorShow.h"
 
-CInitResources::CInitResources() {
-
-}

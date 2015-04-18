@@ -10,7 +10,6 @@
 #include <bits/stringfwd.h>
 #include <vector>
 #include <iostream>
-#include "CApp.h"
 #include "cleanup.h"
 
 struct resolution {
@@ -24,7 +23,7 @@ struct resolution {
     }
     friend std::ostream& operator<< (std::ostream& os, const resolution res);
 };
-std::ostream& operator<< (std::ostream& os, const resolution res) {
+inline  std::ostream& operator<< (std::ostream& os, const resolution res) {
     os << res.Width << "x" << res.Height;
     return os;
 }
@@ -33,6 +32,7 @@ class CWindow {
 protected:
     unsigned int SCREEN_WIDTH;
     unsigned int SCREEN_HEIGHT;
+    float Scale = 1.0;
     SDL_Window *mWindow = nullptr;
     SDL_Renderer *mRender = nullptr;
     const float mRatio;

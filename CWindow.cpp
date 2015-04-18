@@ -2,9 +2,8 @@
 // Created by igoryan on 15.04.15.
 //
 
-#include <bits/stl_vector.h>
 #include "CWindow.h"
-#include <cmath>
+#include "CMyErrorShow.h"
 
 CWindow::CWindow() : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsilon(0.000001) {
     mWindow = SDL_CreateWindow("316 panzers", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
@@ -13,10 +12,12 @@ CWindow::CWindow() : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsi
         SDL_Quit();
     }
 
+    Scale = fabs((float)SCREEN_WIDTH / 640);
+
     mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
         CMyErrorShow::show_error("SDL_CreateRenderer");
-        cleanup(mWindow);
+        SDL_DestroyWindow(mWindow);
         SDL_Quit();
     }
 }
@@ -30,10 +31,12 @@ CWindow::CWindow(std::string title, int Width, int Height, Uint32 flags) : mRati
         SDL_Quit();
     }
 
+    Scale = fabs((float)SCREEN_WIDTH / 640);
+
     mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
         CMyErrorShow::show_error("SDL_CreateRenderer");
-        cleanup(mWindow);
+        SDL_DestroyWindow(mWindow);
         SDL_Quit();
     }
 }
@@ -48,10 +51,12 @@ CWindow::CWindow(std::string title, int x, int y, int width, int height, Uint32 
         SDL_Quit();
     }
 
+    Scale = fabs((float)SCREEN_WIDTH / 640);
+
     mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
         CMyErrorShow::show_error("SDL_CreateRenderer");
-        cleanup(mWindow);
+        SDL_DestroyWindow(mWindow);
         SDL_Quit();
     }
 }
@@ -89,7 +94,7 @@ void CWindow::InitializationResolutions() {
 }
 
 void CWindow::SetResolution(unsigned int w, unsigned int h) {
-    auto print_resolution = [this]  {
+    auto print_resolution = [this] {
         std::cout << this->SCREEN_WIDTH << "x" << this->SCREEN_HEIGHT << std::endl;
     };
     if (w == 0 && h == 0) {
@@ -98,7 +103,7 @@ void CWindow::SetResolution(unsigned int w, unsigned int h) {
         print_resolution();
         return;
     }
-    if (fabs((float)w / (float)h - mRatio) < mEpsilon) {
+    if (fabs((float) w / (float) h - mRatio) < mEpsilon) {
         SCREEN_WIDTH = w;
         SCREEN_HEIGHT = h;
         print_resolution();
@@ -118,5 +123,6 @@ void CWindow::SetResolution(unsigned int w, unsigned int h) {
 }
 
 CWindow::~CWindow() {
-    cleanup(mRender, mWindow);
+    SDL_DestroyRenderer(mRender);
+    SDL_DestroyWindow(mWindow);
 }

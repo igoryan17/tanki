@@ -14,10 +14,10 @@
 
 class CLoadMedia {
 public:
-    CLoadMedia() {}
+    CLoadMedia();
 
     static SDL_Surface *LoadJPG(std::string path) {
-        CInitResources::IMG(IMG_INIT_JPG);
+        IMG_Init(IMG_INIT_JPG);
         SDL_Surface *loadedSurface = IMG_Load(path.c_str());
         if (loadedSurface == nullptr) {
             CMyErrorShow::show_error("IMG_Load");
@@ -26,7 +26,7 @@ public:
     }
 
     static SDL_Surface *LoadPNG(std::string path) {
-        CInitResources::IMG(IMG_INIT_PNG);
+        IMG_Init(IMG_INIT_PNG);
         SDL_Surface *loadedSurface = IMG_Load(path.c_str());
         if (loadedSurface == nullptr) {
             CMyErrorShow::show_error("IMG_Load");
@@ -40,7 +40,6 @@ public:
         }
         return loadedSurface;
     }
-private:
 };
 
 

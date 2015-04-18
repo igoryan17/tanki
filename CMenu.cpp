@@ -3,16 +3,15 @@
 //
 
 #include "CMenu.h"
+#include <cassert>
 
 CMenu::CMenu() : CWindow() {
     mPathToBackground = "menu_images/menu_background.jpg";
-    SDL_Texture *mBackground = CTexture::LoadTexture(mPathToBackground, JPG, mRender);
-    mMutexRender.lock();
+    mBackground = new CTexture(mPathToBackground, mRender, JPG);
+    assert(mBackground != nullptr);
     SDL_RenderClear(mRender);
-    if (SDL_RenderCopy(mRender, mBackground, nullptr, nullptr) != 0) {
-        CMyErrorShow::show_error("SDL_RenderCopy");
-    }
-    mMutexRender.unlock();
+    mBackground->RenderTexture(mRender, 0 , 0);
+    mFlagGPU = true;
 }
 
 CMenu::CMenu(int x, int y, int width, int height, Uint32 flags) : CWindow("316 panzers",
@@ -22,7 +21,7 @@ CMenu::CMenu(int x, int y, int width, int height, Uint32 flags) : CWindow("316 p
                                                                           height,
                                                                           flags) {
     mPathToBackground = "menu_images/menu_background.jpg";
-    SDL_Texture *mBackground = CTexture::LoadTexture(mPathToBackground, JPG, mRender);
+    SDL_Texture *mBackground = CTexture::LoadTexture(mPathToBackground, mRender, JPG);
     mMutexRender.lock();
     SDL_RenderClear(mRender);
     SDL_RenderCopy(mRender, mBackground, nullptr, nullptr);
@@ -30,7 +29,10 @@ CMenu::CMenu(int x, int y, int width, int height, Uint32 flags) : CWindow("316 p
 }
 
 void CMenu::show() {
-    while (mRender!= nullptr && mFlagGPU) {
+    if (!mFlagGPU) {
+        std::cout << "Error show Flag false\n";
+    }
+    while (mFlagGPU) {
         mMutexRender.lock();
         SDL_RenderPresent(mRender);
         mMutexRender.unlock();
@@ -39,7 +41,6 @@ void CMenu::show() {
 }
 
 CMenu::~CMenu() {
-    cleanup(mBackground);
+    delete mBackground;
 }
 
-#include "CWindow.cpp"

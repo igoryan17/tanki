@@ -8,7 +8,6 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "CWindow.h"
-#include "CApp.h"
 #include "CLoadMedia.h"
 #include <mutex>
 #include "CTexture.h"
@@ -22,7 +21,7 @@ private:
         exit = 3,
         count = 4
     };
-    SDL_Texture *mBackground = nullptr;
+    CTexture *mBackground = nullptr;
     std::string mGameName = "316 Panzers";
     std::string mPathToBackground;
     std::string mTexts[count] = {"play", "options", "creits", "exit"};
