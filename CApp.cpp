@@ -3,9 +3,7 @@
 //
 
 #include "CApp.h"
-#include <cstdlib>
 #include <cstring>
-#include <SDL2/SDL_video.h>
 
 CApp::CApp() {
     mRunning = true;
@@ -14,66 +12,58 @@ CApp::CApp() {
 }
 
 void CApp::ChooseScreenResolution() {
-    resolution res;
     SDL_DisplayMode mode;
     if (mArgc == 2) {
         if (SDL_GetCurrentDisplayMode(0, &mode) != 0) {
             CMyErrorShow::show_error("SDL_GetCurrentDisplayMode");
-            mResolution = res;
             return;
         }
     }
     char *ptr = nullptr;
     switch(mArgc) {
         case 1:
-            res.Width = 640;
-            res.Height = 480;
-            mResolution = res;
             return;
         case 2:
             if (strcmp("-f", mArgv[1]) != 0) {
                 std::cout << "doesn't know parametr:" << mArgv[1] << std::endl;
-                mResolution = res;
                 return;
             }
-            res.Width = mode.w;
-            res.Height = mode.h;
-            mResolution = res;
+            mResolution.Width = mode.w;
+            mResolution.Height = mode.h;
             return;
         case 3:
             if (strcmp("-u", mArgv[1]) != 0) {
                 std::cout << "doesn't know parametr:" << mArgv[1] << std::endl;
             }
-            res.Width = atoi(mArgv[2]);
+            mResolution.Width = atoi(mArgv[2]);
             ptr = strchr(mArgv[2], 'x');
             if (ptr == nullptr) {
-                res.Width = 0;
-                res.Height = 0;
-                mResolution = res;
+                mResolution.Width = 0;
+                mResolution.Height = 0;
                 return;
             }
-            res.Height = atoi(ptr);
-            mResolution = res;
+            mResolution.Height = atoi(ptr);
             return;
         default:
-            res.Width = 0;
-            res.Height = 0;
-            mResolution = res;
+            mResolution.Width = 0;
+            mResolution.Height = 0;
             return;
     }
 }
 
 void CApp::OnMenu() {
-    resolution res = mResolution;
-    if (res.Width > 0 && res.Height > 0) {
-        mMenu = new CMenu(0, 0, res.Width, res.Height, SDL_WINDOW_SHOWN);
-        mScale = (float) res.Height / 480;
+    if (mResolution.Width > 0 && mResolution.Height > 0) {
+        mMenu = new CMenu(0, 0, mResolution.Width, mResolution.Height, SDL_WINDOW_SHOWN);
+        mScale = (float) mResolution.Height / 480;
         std::cout << "Scale:" << mScale << std::endl;
     }
     else {
         mMenu = new CMenu();
+        mScale = 1;
+        std::cout << "Scale:" << mScale << std::endl;
     }
     //turn on music
+    /*
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
     Mix_VolumeMusic(50);
     Mix_Music *tap = Mix_LoadMUS("sound/Wot_menu.wav");
@@ -81,17 +71,19 @@ void CApp::OnMenu() {
         std::cout << "Error Mix_LoadMUS:" << Mix_GetError() << std::endl;
     }
     Mix_PlayMusic(tap, 1);
+     */
     //end initialization music
     SDL_Event Event;
     while (mRunning) {
-        mMenu->mMutexRender.lock();
         while (SDL_PollEvent(&Event) != 0) {
             if (Event.type == SDL_QUIT) {
                 mRunning = false;
+                mMenu->mFlagGPU = false;
+                mMenu->mMutexRender.lock();
                 SDL_DestroyRenderer(mMenu->mRender);
+                mMenu->mMutexRender.unlock();
             }
         }
-        mMenu->mMutexRender.unlock();
     }
 }
 

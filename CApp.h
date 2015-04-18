@@ -9,6 +9,7 @@
 #include "CMenu.h"
 #include <SDL2/SDL_thread.h>
 #include <thread>
+#include <mutex>
 
 typedef SDL_Thread MyThread;
 class CApp {
@@ -35,7 +36,7 @@ public:
     void CallGPU();
     static void ThreadGPU(void* data) {
         CMenu *ptr = static_cast<CMenu*>(data);
-        return ptr->show_window();
+        return ptr->show();
     }
     static void ThreadEngine(void* data) {
         CApp *ptr = static_cast<CApp*>(data);
@@ -43,6 +44,7 @@ public:
     }
     void wait();
     void join();
+    friend class CMenu;
 };
 
 MyThread* CApp::mGPU = nullptr;

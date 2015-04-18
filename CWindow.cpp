@@ -6,9 +6,7 @@
 #include "CWindow.h"
 #include <cmath>
 
-CWindow::CWindow() : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsilon(0.000001){
-    InitializationResolutions();
-    SetResolution(0, 0);
+CWindow::CWindow() : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsilon(0.000001) {
     mWindow = SDL_CreateWindow("316 panzers", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (mWindow == nullptr) {
         CMyErrorShow::show_error("SDL_CreateWindow");

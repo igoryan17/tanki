@@ -6,11 +6,9 @@
 
 CMenu::CMenu() : CWindow() {
     mPathToBackground = "menu_images/menu_background.jpg";
-    SDL_Surface *loaded = CLoadMedia::LoadJPG(mPathToBackground);
-    SDL_Texture *mBackground = SDL_CreateTextureFromSurface(mRender, loaded);
-    SDL_FreeSurface(loaded);
-    SDL_RenderClear(mRender);
+    SDL_Texture *mBackground = CTexture::LoadTexture(mPathToBackground, JPG, mRender);
     mMutexRender.lock();
+    SDL_RenderClear(mRender);
     SDL_RenderCopy(mRender, mBackground, NULL, NULL);
     mMutexRender.unlock();
 }
@@ -22,20 +20,19 @@ CMenu::CMenu(int x, int y, int width, int height, Uint32 flags) : CWindow("316 p
                                                                           height,
                                                                           flags) {
     mPathToBackground = "menu_images/menu_background.jpg";
-    SDL_Surface *loaded = CLoadMedia::LoadJPG(mPathToBackground);
-    SDL_Texture *mBackground = SDL_CreateTextureFromSurface(mRender, loaded);
-    SDL_FreeSurface(loaded);
+    SDL_Texture *mBackground = CTexture::LoadTexture(mPathToBackground, JPG, mRender);
     mMutexRender.lock();
     SDL_RenderClear(mRender);
     SDL_RenderCopy(mRender, mBackground, NULL, NULL);
     mMutexRender.unlock();
 }
 
-void CMenu::show_window() {
-    while(mRender!= nullptr) {
-        SDL_RenderCopy(mRender, mBackground, NULL, NULL);
+void CMenu::show() {
+    while (mRender!= nullptr && mFlagGPU) {
+        mMutexRender.lock();
         SDL_RenderPresent(mRender);
-        SDL_Delay(700);
+        mMutexRender.unlock();
+        SDL_Delay(100);
     }
 }
 

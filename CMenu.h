@@ -11,6 +11,7 @@
 #include "CApp.h"
 #include "CLoadMedia.h"
 #include <mutex>
+#include "CTexture.h"
 
 class CMenu : public CWindow {
 private:
@@ -26,11 +27,12 @@ private:
     std::string mPathToBackground;
     std::string mTexts[count] = {"play", "options", "creits", "exit"};
     std::mutex mMutexRender;
+    bool mFlagGPU = true;
 public:
     CMenu();
     CMenu(int x, int y, int width, int height, Uint32 flags);
-    void show_window();
     virtual ~CMenu();
+    void show();
     friend class CApp;
 };
 

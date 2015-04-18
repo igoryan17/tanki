@@ -13,9 +13,10 @@
 #include "CApp.h"
 
 struct resolution {
-    unsigned int Width = 0;
-    unsigned int Height  = 0;
-    resolution() : Width(640), Height(480) {}
+    unsigned int Width;
+    unsigned int Height;
+    resolution() : Width(0), Height(0) {}
+    resolution(unsigned int W, unsigned int H) : Width(W), Height(H) {}
     resolution(const resolution & obj) {
         Width = obj.Width;
         Height = obj.Height;
