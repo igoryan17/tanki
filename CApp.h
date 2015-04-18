@@ -11,7 +11,7 @@
 #include <thread>
 #include <mutex>
 
-typedef SDL_Thread MyThread;
+typedef std::thread MyThread;
 class CApp {
 private:
     bool mRunning = false;
@@ -34,15 +34,6 @@ public:
     void ChooseScreenResolution();
     void CallEngine();
     void CallGPU();
-    static void ThreadGPU(void* data) {
-        CMenu *ptr = static_cast<CMenu*>(data);
-        return ptr->show();
-    }
-    static void ThreadEngine(void* data) {
-        CApp *ptr = static_cast<CApp*>(data);
-        return ptr->OnMenu();
-    }
-    void wait();
     void join();
     friend class CMenu;
 };

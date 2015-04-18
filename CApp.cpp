@@ -89,13 +89,16 @@ void CApp::OnMenu() {
 
 void CApp::CallGPU() {
     if (mFlagThread) {
-        mGPU = SDL_CreateThread((SDL_ThreadFunction) ThreadGPU, "GPU", mMenu);
+        mGPU = new MyThread(&CMenu::show, mMenu);
+    }
+    else {
+        mMenu->show();
     }
 }
 
 void CApp::CallEngine() {
     if (mFlagThread) {
-        mEngine = SDL_CreateThread((SDL_ThreadFunction) ThreadEngine, "Engine", this);
+        mEngine = new MyThread(&CApp::OnMenu, this);
     }
     else {
         OnMenu();
@@ -103,8 +106,8 @@ void CApp::CallEngine() {
 }
 
 void CApp::join() {
-    SDL_WaitThread(mEngine, NULL);
-    SDL_WaitThread(mGPU, NULL);
+    mEngine->join();
+    mGPU->join();
 }
 
 CApp::~CApp() {
