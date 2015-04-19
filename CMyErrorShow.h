@@ -20,14 +20,16 @@ public:
         }
 
         if (name_function.find("IMG") != std::string::npos) {
-            std::cout << err << IMG_GetError() << std::endl;
+            std::cout << err << SDL_GetError() << std::endl;
         }
 
         if (name_function.find("Mix") != std::string::npos) {
-            std::cout << err << Mix_GetError() << std::endl;
+            std::cout << err << SDL_GetError() << std::endl;
+        }
+        if (name_function.find("TTF") != std::string::npos) {
+            std::cout << err << SDL_GetError() << std::endl;
         }
     }
 };
-
 
 #endif //TANKS_CMYERRORSHOW_H

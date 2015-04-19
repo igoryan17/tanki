@@ -10,6 +10,7 @@ CApp::CApp(int argc, char **argv) : mArgc(argc), mArgv(argv) {
     mRunning = true;
     CInitResources::SDL(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     CInitResources::IMG(IMG_INIT_JPG);
+    CInitResources::TTF();
     ChooseScreenResolution();
     if (mResolution.Width > 0 && mResolution.Height > 0) {
         mMenu = new CMenu(0, 0, mResolution, SDL_WINDOW_SHOWN);
@@ -60,31 +61,17 @@ void CApp::ChooseScreenResolution() {
     }
 }
 
-void CApp::OnMenu() {
-    //turn on music
-    /*
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
-    Mix_VolumeMusic(50);
-    Mix_Music *tap = Mix_LoadMUS("sound/Wot_menu.wav");
-    if (tap == nullptr) {
-        std::cout << "Error Mix_LoadMUS:" << Mix_GetError() << std::endl;
-    }
-    Mix_PlayMusic(tap, 1);
-    */
-    while (mRunning) {
-        if (mEvent.type == SDL_QUIT) {
-            std::cout << "SDL_Quit" << std::endl;
-            mRunning = false;
-        }
-    }
+void CApp::Engine() {
+    assert(mMenu != nullptr);
+    mMenu->OnMenu(mEvent);
 }
 
 void CApp::CallEngine() {
     if (mFlagThread) {
-        mEngine = new MyThread(&CApp::OnMenu, this);
+        mEngine = new MyThread(&CApp::Engine, this);
     }
     else {
-        OnMenu();
+        Engine();
     }
 }
 
@@ -95,6 +82,16 @@ void CApp::join() {
 void CApp::ShowRender() {
     assert(mMenu != nullptr);
     assert(mRender != nullptr);
+    SDL_PollEvent(&mEvent);
+        if (mEvent.type == SDL_QUIT) {
+            SDL_Quit();
+            SDL_RenderClear(mRender);
+            mRunning = false;
+            return;
+        }
+        else {
+            CallEngine();
+        }
     while (mRunning) {
         while (SDL_PollEvent(&mEvent) != 0) {
             if (mEvent.type == SDL_QUIT) {
@@ -119,7 +116,6 @@ CApp::~CApp() {
 
 int main(int argc, char *argv[]) {
     CApp TheApp(argc, argv);
-    TheApp.CallEngine();
     TheApp.ShowRender();
     TheApp.join();
     return 0;

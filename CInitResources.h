@@ -7,6 +7,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include "CMyErrorShow.h"
 
 enum MyFlag {
@@ -34,6 +35,15 @@ public:
         if (!(IMG_Init(flags) & flags)) {
             CMyErrorShow::show_error("IMG_Init");
             return  not_init;
+        }
+        else {
+            return init;
+        }
+    }
+    static MyFlag TTF() {
+        if (TTF_Init() != 0) {
+            CMyErrorShow::show_error("TTF_Init");
+            return not_init;
         }
         else {
             return init;

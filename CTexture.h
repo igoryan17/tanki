@@ -27,6 +27,9 @@ public:
 
     CTexture(std::string path, SDL_Renderer *render, int flag);
 
+    CTexture(const std::string &message, const std::string &fontFile,
+             SDL_Color color, int fontSize, SDL_Renderer *renderer);
+
     void RenderTexture(SDL_Renderer *ren, int x, int y);
 
     void RenderTexture(SDL_Renderer *ren, int x, int y, int w, int h);

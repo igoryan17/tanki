@@ -30,7 +30,7 @@ public:
 
     ~CApp();
 
-    void OnMenu();
+    void Engine();
 
     void ChooseScreenResolution();
 

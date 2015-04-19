@@ -17,6 +17,32 @@ CTexture::CTexture(std::string path, SDL_Renderer *render, int flag) {
     }
 }
 
+CTexture::CTexture(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize,
+                   SDL_Renderer *renderer) {
+    TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
+    if (font == nullptr) {
+        mTexture = nullptr;
+        CMyErrorShow::show_error("TTF_OpenFont");
+    }
+    else {
+        SDL_Surface *surf = TTF_RenderText_Blended(font, message.c_str(), color);
+        if (surf == nullptr) {
+            TTF_CloseFont(font);
+            mTexture = nullptr;
+            CMyErrorShow::show_error("TTF_RenderText_Blended");
+        }
+        else {
+            SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surf);
+            if (texture == nullptr) {
+                CMyErrorShow::show_error("SDL_CreateTextureFromSurface");
+            }
+            mTexture = texture;
+            SDL_FreeSurface(surf);
+            TTF_CloseFont(font);
+        }
+    }
+}
+
 void CTexture::RenderTexture(SDL_Renderer *ren, int x, int y) {
     assert(x >= 0 && y >= 0);
     if (ren == nullptr) {
