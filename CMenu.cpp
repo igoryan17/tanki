@@ -5,26 +5,21 @@
 #include "CMenu.h"
 #include <cassert>
 
-CMenu::CMenu() : CWindow() {
+CMenu::CMenu(resolution &res) : CWindow(res) {
     mPathToBackground = "menu_images/menu_background.jpg";
     mBackground = new CTexture(mPathToBackground, mRender, JPG);
     assert(mBackground != nullptr);
     SDL_RenderClear(mRender);
-    mBackground->RenderTexture(mRender, 0 , 0);
+    mBackground->RenderTexture(mRender, 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     mFlagGPU = true;
 }
 
-CMenu::CMenu(int x, int y, int width, int height, Uint32 flags) : CWindow("316 panzers",
-                                                                          x,
-                                                                          y,
-                                                                          width,
-                                                                          height,
-                                                                          flags) {
+CMenu::CMenu(int x, int y, resolution &res, Uint32 flags) : CWindow(x, y, res, flags) {
     mPathToBackground = "menu_images/menu_background.jpg";
-    SDL_Texture *mBackground = CTexture::LoadTexture(mPathToBackground, mRender, JPG);
+    CTexture *mBackground = new CTexture(mPathToBackground, mRender, JPG);
     mMutexRender.lock();
     SDL_RenderClear(mRender);
-    SDL_RenderCopy(mRender, mBackground, nullptr, nullptr);
+    mBackground->RenderTexture(mRender, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     mMutexRender.unlock();
 }
 
@@ -34,13 +29,21 @@ void CMenu::show() {
     }
     while (mFlagGPU) {
         mMutexRender.lock();
-        SDL_RenderPresent(mRender);
+        SDL_RenderClear(mRender);
         mMutexRender.unlock();
-        SDL_Delay(100);
+
+        mMutexRender.lock();
+        mBackground->RenderTexture(mRender, 0 , 0);
+        mMutexRender.unlock();
+        SDL_RenderPresent(mRender);
+        SDL_Delay(40);
     }
 }
 
 CMenu::~CMenu() {
-    delete mBackground;
+    std::cout << "~CMenu" << std::endl;
+    if (mBackground) {
+        std::cout << "Clear Texture" << std::endl;
+        delete mBackground;
+    }
 }
-

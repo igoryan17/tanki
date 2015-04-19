@@ -9,36 +9,37 @@
 #include <SDL2/SDL_image.h>
 #include "CMyErrorShow.h"
 
-/*enum MyFlag {
+enum MyFlag {
     not_init = false,
     init = true
 };
 
 class CInitResources {
 private:
-    static MyFlag mSDL;
-    static MyFlag mIMG;
 public:
-    static void SDL(Uint32 flags) {
+    CInitResources() {
+    }
+
+    static MyFlag SDL(Uint32 flags) {
         if (SDL_Init(flags) < 0) {
             CMyErrorShow::show_error("SDL_Init");
+            return not_init;
         }
         else {
-            mSDL = init;
+            return init;
         }
     }
 
-    static void IMG(int flags) {
+    static MyFlag IMG(int flags) {
         if (!(IMG_Init(flags) & flags)) {
             CMyErrorShow::show_error("IMG_Init");
+            return  not_init;
         }
         else {
-            mIMG = init;
+            return init;
         }
     }
+    ~CInitResources() {}
 };
 
-MyFlag CInitResources::mSDL = not_init;
-MyFlag CInitResources::mIMG = not_init;
-*/
 #endif //TANKS_CINITRESOURCES_H

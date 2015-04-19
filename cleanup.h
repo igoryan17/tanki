@@ -7,8 +7,8 @@
 
 #include <utility>
 #include <SDL2/SDL.h>
-
-/*template<typename T, typename... Args>
+/*
+template<typename T, typename... Args>
 void cleanup(T *t, Args&&... args){
     //Cleanup the first item in the list
     cleanup(t);

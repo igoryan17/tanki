@@ -5,14 +5,16 @@
 #include "CWindow.h"
 #include "CMyErrorShow.h"
 
-CWindow::CWindow() : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsilon(0.000001) {
+CWindow::CWindow(resolution &res) : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsilon(0.000001) {
+    res.Width = SCREEN_WIDTH;
+    res.Height = SCREEN_HEIGHT;
     mWindow = SDL_CreateWindow("316 panzers", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (mWindow == nullptr) {
         CMyErrorShow::show_error("SDL_CreateWindow");
         SDL_Quit();
     }
 
-    Scale = fabs((float)SCREEN_WIDTH / 640);
+    Scale = (float) fabs((float)SCREEN_WIDTH / 640);
 
     mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
@@ -22,36 +24,19 @@ CWindow::CWindow() : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsi
     }
 }
 
-CWindow::CWindow(std::string title, int Width, int Height, Uint32 flags) : mRatio(4 / 3), mEpsilon(0.000001) {
-    InitializationResolutions();
-    SetResolution(Width, Height);
-    mWindow = SDL_CreateWindow(title.c_str(), 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
-    if (mWindow == nullptr) {
-        CMyErrorShow::show_error("SDL_CreateWindow");
-        SDL_Quit();
-    }
-
-    Scale = fabs((float)SCREEN_WIDTH / 640);
-
-    mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (mRender == nullptr) {
-        CMyErrorShow::show_error("SDL_CreateRenderer");
-        SDL_DestroyWindow(mWindow);
-        SDL_Quit();
-    }
-}
-
-CWindow::CWindow(std::string title, int x, int y, int width, int height, Uint32 flags) :
+CWindow::CWindow(int x, int y, resolution &res, Uint32 flags) :
         mRatio(4 / 3), mEpsilon(0.000001) {
     InitializationResolutions();
-    SetResolution(width, height);
-    mWindow = SDL_CreateWindow(title.c_str(), x, y, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+    SetResolution(res.Width, res.Height);
+    res.Width = SCREEN_WIDTH;
+    res.Height = SCREEN_HEIGHT;
+    mWindow = SDL_CreateWindow("316 panzers", x, y, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
     if (mWindow == nullptr) {
         CMyErrorShow::show_error("SDL_CreateWindow");
         SDL_Quit();
     }
 
-    Scale = fabs((float)SCREEN_WIDTH / 640);
+    Scale = (float) fabs((float)SCREEN_WIDTH / 640);
 
     mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
@@ -109,7 +94,7 @@ void CWindow::SetResolution(unsigned int w, unsigned int h) {
         print_resolution();
         return;
     }
-    std::vector<resolution>::iterator i = mResolutions.begin();
+    std::vector<resolution>::iterator i;
     for (i = mResolutions.begin(); i < mResolutions.end(); i++) {
         if (w >= (*i).Width && h >= (*i).Height) {
             SCREEN_WIDTH = (*i).Width;
@@ -123,6 +108,7 @@ void CWindow::SetResolution(unsigned int w, unsigned int h) {
 }
 
 CWindow::~CWindow() {
+    std::cout << "~CWindow" << std::endl;
     SDL_DestroyRenderer(mRender);
     SDL_DestroyWindow(mWindow);
 }

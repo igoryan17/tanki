@@ -20,13 +20,12 @@ private:
     bool mFlagThread = true;
     CMenu *mMenu = nullptr;
     resolution mResolution;
-    static MyThread *mGPU;
+    SDL_Event mEvent;
     static MyThread *mEngine;
+    int mArgc = 1;
+    char** mArgv = nullptr;
 public:
-    int mArgc;
-    char **mArgv;
-
-    CApp();
+    CApp(int argc, char **argv);
 
     ~CApp();
 
@@ -36,13 +35,12 @@ public:
 
     void CallEngine();
 
-    void CallGPU();
-
     void join();
+
+    void ShowRender();
 
     friend class CMenu;
 };
 
-MyThread *CApp::mGPU = nullptr;
 MyThread *CApp::mEngine = nullptr;
 #endif //SDL_EXAMPLES_CAPP_H

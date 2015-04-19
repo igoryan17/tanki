@@ -4,11 +4,19 @@
 
 #include "CApp.h"
 #include <cstring>
+#include <cassert>
 
-CApp::CApp() {
+CApp::CApp(int argc, char **argv) : mArgc(argc), mArgv(argv) {
     mRunning = true;
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    IMG_Init(IMG_INIT_JPG);
+    CInitResources::SDL(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    CInitResources::IMG(IMG_INIT_JPG);
+    ChooseScreenResolution();
+    if (mResolution.Width > 0 && mResolution.Height > 0) {
+        mMenu = new CMenu(0, 0, mResolution, SDL_WINDOW_SHOWN);
+    }
+    else {
+        mMenu = new CMenu(mResolution);
+    }
 }
 
 void CApp::ChooseScreenResolution() {
@@ -52,12 +60,6 @@ void CApp::ChooseScreenResolution() {
 }
 
 void CApp::OnMenu() {
-    if (mResolution.Width > 0 && mResolution.Height > 0) {
-        mMenu = new CMenu(0, 0, mResolution.Width, mResolution.Height, SDL_WINDOW_SHOWN);
-    }
-    else {
-        mMenu = new CMenu();
-    }
     //turn on music
     /*
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
@@ -68,28 +70,8 @@ void CApp::OnMenu() {
     }
     Mix_PlayMusic(tap, 1);
      */
-    //end initialization music
-    while(!mMenu->mFlagGPU);
-    CallGPU();
-    SDL_Event Event;
-    while (mRunning) {
-        while (SDL_PollEvent(&Event) != 0) {
-            if (Event.type == SDL_QUIT) {
-                std::cout << "Exit\n";
-                mRunning = false;
-                mMenu->mFlagGPU = false;
-            }
-        }
-    }
-}
-
-void CApp::CallGPU() {
-    if (mFlagThread) {
-        mGPU = new MyThread(&CMenu::show, mMenu);
-    }
-    else {
-        mMenu->show();
-    }
+    SDL_Delay(3000);
+    mRunning = false;
 }
 
 void CApp::CallEngine() {
@@ -103,20 +85,32 @@ void CApp::CallEngine() {
 
 void CApp::join() {
     mEngine->join();
-    mGPU->join();
+}
+
+void CApp::ShowRender() {
+    assert(mMenu != nullptr);
+    assert(mMenu->mRender != nullptr);
+    while (mRunning) {
+        while (SDL_PollEvent(&mEvent) != 0) {
+            if (mEvent.type == SDL_QUIT) {
+                SDL_Quit();
+            }
+            SDL_RenderPresent(mMenu->mRender);
+            SDL_Delay(30);
+        }
+    }
 }
 
 CApp::~CApp() {
-    SDL_Quit();
+    std::cout << "~CApp" << std::endl;
+    delete mEngine;
     delete mMenu;
 }
 
 int main(int argc, char *argv[]) {
-    CApp TheApp;
-    TheApp.mArgc = argc;
-    TheApp.mArgv = argv;
-    TheApp.ChooseScreenResolution();
+    CApp TheApp(argc, argv);
     TheApp.CallEngine();
+    TheApp.ShowRender();
     TheApp.join();
     return 0;
 }

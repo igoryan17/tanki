@@ -14,7 +14,7 @@
 
 class CMenu : public CWindow {
 private:
-    enum Menu{
+    enum Menu {
         play = 0,
         options = 1,
         credits = 2,
@@ -28,8 +28,8 @@ private:
     std::mutex mMutexRender;
     bool mFlagGPU = true;
 public:
-    CMenu();
-    CMenu(int x, int y, int width, int height, Uint32 flags);
+    CMenu(resolution & res);
+    CMenu(int x, int y, resolution &res, Uint32 flags);
     virtual ~CMenu();
     void show();
     friend class CApp;
