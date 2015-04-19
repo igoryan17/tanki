@@ -17,6 +17,7 @@ CApp::CApp(int argc, char **argv) : mArgc(argc), mArgv(argv) {
     else {
         mMenu = new CMenu(mResolution);
     }
+    mRender = mMenu->mRender;
 }
 
 void CApp::ChooseScreenResolution() {
@@ -69,9 +70,13 @@ void CApp::OnMenu() {
         std::cout << "Error Mix_LoadMUS:" << Mix_GetError() << std::endl;
     }
     Mix_PlayMusic(tap, 1);
-     */
-    SDL_Delay(3000);
-    mRunning = false;
+    */
+    while (mRunning) {
+        if (mEvent.type == SDL_QUIT) {
+            std::cout << "SDL_Quit" << std::endl;
+            mRunning = false;
+        }
+    }
 }
 
 void CApp::CallEngine() {
@@ -89,20 +94,25 @@ void CApp::join() {
 
 void CApp::ShowRender() {
     assert(mMenu != nullptr);
-    assert(mMenu->mRender != nullptr);
+    assert(mRender != nullptr);
     while (mRunning) {
         while (SDL_PollEvent(&mEvent) != 0) {
             if (mEvent.type == SDL_QUIT) {
                 SDL_Quit();
+                SDL_RenderClear(mRender);
+                mRunning = false;
+                return;
             }
-            SDL_RenderPresent(mMenu->mRender);
+            SDL_RenderPresent(mRender);
             SDL_Delay(30);
         }
     }
+    SDL_Quit();
 }
 
 CApp::~CApp() {
     std::cout << "~CApp" << std::endl;
+    while (mRunning);
     delete mEngine;
     delete mMenu;
 }

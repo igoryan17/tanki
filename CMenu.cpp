@@ -11,7 +11,6 @@ CMenu::CMenu(resolution &res) : CWindow(res) {
     assert(mBackground != nullptr);
     SDL_RenderClear(mRender);
     mBackground->RenderTexture(mRender, 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    mFlagGPU = true;
 }
 
 CMenu::CMenu(int x, int y, resolution &res, Uint32 flags) : CWindow(x, y, res, flags) {
@@ -21,23 +20,6 @@ CMenu::CMenu(int x, int y, resolution &res, Uint32 flags) : CWindow(x, y, res, f
     SDL_RenderClear(mRender);
     mBackground->RenderTexture(mRender, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     mMutexRender.unlock();
-}
-
-void CMenu::show() {
-    if (!mFlagGPU) {
-        std::cout << "Error show Flag false\n";
-    }
-    while (mFlagGPU) {
-        mMutexRender.lock();
-        SDL_RenderClear(mRender);
-        mMutexRender.unlock();
-
-        mMutexRender.lock();
-        mBackground->RenderTexture(mRender, 0 , 0);
-        mMutexRender.unlock();
-        SDL_RenderPresent(mRender);
-        SDL_Delay(40);
-    }
 }
 
 CMenu::~CMenu() {

@@ -26,12 +26,10 @@ private:
     std::string mPathToBackground;
     std::string mTexts[count] = {"play", "options", "creits", "exit"};
     std::mutex mMutexRender;
-    bool mFlagGPU = true;
 public:
     CMenu(resolution & res);
     CMenu(int x, int y, resolution &res, Uint32 flags);
     virtual ~CMenu();
-    void show();
     friend class CApp;
 };
 

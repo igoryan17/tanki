@@ -19,11 +19,12 @@ private:
     bool mRunning = false;
     bool mFlagThread = true;
     CMenu *mMenu = nullptr;
+    SDL_Renderer *mRender;
     resolution mResolution;
     SDL_Event mEvent;
     static MyThread *mEngine;
     int mArgc = 1;
-    char** mArgv = nullptr;
+    char **mArgv = nullptr;
 public:
     CApp(int argc, char **argv);
 
