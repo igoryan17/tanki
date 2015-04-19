@@ -23,7 +23,11 @@ add_executable(tanki ${SOURCE_FILES} CApp.cpp CApp.h
 									CMyErrorShow.cpp CMyErrorShow.h
 									CTexture.cpp CTexture.h
 									CWindow.cpp CWindow.h
-									Ctext.cpp Ctext.h)
+									Ctext.cpp Ctext.h
+									CTank.cpp CTank.h
+									CTankBody.cpp CTankBody.h
+									CTurret.cpp CTurret.h
+									coordinats.h)
 
 #target_link_libraries(SDL_examples ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY})
 

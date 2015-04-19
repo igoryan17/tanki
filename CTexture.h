@@ -57,6 +57,8 @@ public:
         }
         return Texture_ret;
     }
+
+    friend class CMenu;
 };
 
 #endif //TANKI_CTEXTURE_H

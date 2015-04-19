@@ -20,6 +20,8 @@ public:
     bool CheckPosition(const int & x, const int & y);
 
     ~Ctext();
+
+    friend class CMenu;
 };
 
 #endif //TANKI_CTEXT_H

@@ -12,16 +12,20 @@
 #include <mutex>
 #include "CTexture.h"
 #include "Ctext.h"
+#include "coordinats.h"
 
-class CMenu : public CWindow {
-private:
-    enum Menu {
+enum Menu {
         play,
         options,
         credits,
-        exit,
+        exit_game,
         count
     };
+
+
+
+class CMenu : public CWindow {
+private:
     CTexture *mBackground = nullptr;
     const std::string mGameName = "316 Panzers";
     const std::string mFontPath = "Text/Comfortaa_Bold.ttf";
@@ -29,7 +33,8 @@ private:
     const int mTextSize = (int const) (32 * Scale);
     const std::string mPathToBackground = "menu_images/menu_background.jpg";
     const std::string mTexts[count] = {"play", "options", "credits", "exit"};
-    Ctext *mTextsMenu[count];
+    Ctext* mTextsMenu[count];
+    TextureSize mTexturesData[count];
     std::mutex mMutexRender;
 public:
     CMenu(resolution &res);
@@ -37,6 +42,10 @@ public:
     CMenu(int x, int y, resolution &res, Uint32 flags);
 
     virtual ~CMenu();
+
+    void DrawMenu();
+
+    int ProcessingMouseCoordinat(int x, int y);
 
     void OnMenu(SDL_Event &Event);
 

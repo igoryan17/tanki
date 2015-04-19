@@ -5,7 +5,7 @@
 #include "CWindow.h"
 #include "CMyErrorShow.h"
 
-CWindow::CWindow(resolution &res) : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRatio(4 / 3), mEpsilon(0.000001) {
+CWindow::CWindow(resolution &res) : SCREEN_WIDTH(800), SCREEN_HEIGHT(600), mRatio(4 / 3), mEpsilon(0.000001) {
     res.Width = SCREEN_WIDTH;
     res.Height = SCREEN_HEIGHT;
     mWindow = SDL_CreateWindow("316 panzers", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
@@ -14,7 +14,9 @@ CWindow::CWindow(resolution &res) : SCREEN_WIDTH(640), SCREEN_HEIGHT(480), mRati
         SDL_Quit();
     }
 
-    Scale = (float) fabs((float)SCREEN_WIDTH / 640);
+    Scale = (float) fabs((float)SCREEN_WIDTH / 800);
+
+    std::cout << "Scale:" << Scale << std::endl;
 
     mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
@@ -36,7 +38,8 @@ CWindow::CWindow(int x, int y, resolution &res, Uint32 flags) :
         SDL_Quit();
     }
 
-    Scale = (float) fabs((float)SCREEN_WIDTH / 640);
+    Scale = (float) fabs((float)SCREEN_WIDTH / 800);
+    std::cout << "Scale:" << Scale << std::endl;
 
     mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {
