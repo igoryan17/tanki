@@ -43,6 +43,21 @@ CTexture::CTexture(const std::string &message, const std::string &fontFile, SDL_
     }
 }
 
+CTexture::CTexture(std::string path, SDL_Renderer *render, int flag, SDL_Color color) {
+    assert(render!= nullptr);
+    mTexture = nullptr;
+    SDL_Surface *temp;
+    temp = LoadSurface(path, flag);
+    if (temp) {
+        SDL_SetColorKey(temp, SDL_TRUE, SDL_MapRGB(temp->format, color.r, color.g, color.b));
+        mTexture = SDL_CreateTextureFromSurface(render, temp);
+    }
+    else {
+        std::cout << "couldn't get Surface" << std::endl;
+    }
+    SDL_FreeSurface(temp);
+}
+
 void CTexture::RenderTexture(SDL_Renderer *ren, int x, int y) {
     assert(x >= 0 && y >= 0);
     if (ren == nullptr) {

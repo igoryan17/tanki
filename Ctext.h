@@ -9,17 +9,12 @@
 #include <string>
 #include "CTexture.h"
 
-class Ctext {
+class Ctext : public CTexture {
 private:
-    CTexture *mText = nullptr;
 public:
     Ctext(std::string message, const std::string &fontFile, SDL_Color color, int fontSize, SDL_Renderer *renderer);
 
-    void render(SDL_Renderer *ren, int x, int y);
-
-    bool CheckPosition(const int & x, const int & y);
-
-    ~Ctext();
+    virtual ~Ctext();
 
     friend class CMenu;
 };

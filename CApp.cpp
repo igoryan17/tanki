@@ -100,8 +100,12 @@ void CApp::ShowRender() {
                 mRunning = false;
                 return;
             }
+            mMenu->mMutexRender.lock();
+            SDL_RenderClear(mRender);
+            mMenu->mTankBody->RenderTexture(mRender, 0 , 0);
             SDL_RenderPresent(mRender);
-            SDL_Delay(30);
+            mMenu->mMutexRender.unlock();
+            SDL_Delay(50);
         }
     }
     SDL_Quit();

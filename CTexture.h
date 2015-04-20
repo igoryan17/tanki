@@ -18,14 +18,18 @@ enum type {
 };
 
 class CTexture {
-private:
-    SDL_Texture *mTexture = nullptr;
+protected:
+        SDL_Texture *mTexture = nullptr;
 public:
-    CTexture() { }
+    friend class CMenu;
+
+    CTexture() {}
 
     ~CTexture();
 
     CTexture(std::string path, SDL_Renderer *render, int flag);
+
+    CTexture(std::string path, SDL_Renderer *render, int flag, SDL_Color color);
 
     CTexture(const std::string &message, const std::string &fontFile,
              SDL_Color color, int fontSize, SDL_Renderer *renderer);
@@ -58,7 +62,19 @@ public:
         return Texture_ret;
     }
 
-    friend class CMenu;
+    static SDL_Surface* LoadSurface(std::string & path, int flag) {
+        switch (flag) {
+            case BMP:
+                return CLoadMedia::LoadBMP(path);
+            case JPG:
+                return CLoadMedia::LoadJPG(path);
+            case PNG:
+                return CLoadMedia::LoadPNG(path);
+            default:
+                std::cout << "couldn't load surface" << std::endl;
+                return nullptr;
+        }
+    }
 };
 
 #endif //TANKI_CTEXTURE_H

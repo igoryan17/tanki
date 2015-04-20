@@ -27,7 +27,8 @@ add_executable(tanki ${SOURCE_FILES} CApp.cpp CApp.h
 									CTank.cpp CTank.h
 									CTankBody.cpp CTankBody.h
 									CTurret.cpp CTurret.h
-									coordinats.h)
+									coordinats.h
+									MyColor.h)
 
 #target_link_libraries(SDL_examples ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY})
 

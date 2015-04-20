@@ -7,19 +7,23 @@
 
 #include "coordinats.h"
 #include "CTexture.h"
+#include <SDL2/SDL.h>
+#include "MyColor.h"
 
-class CTankBody {
+class CTankBody : public CTexture {
 protected:
     coordinate mTopLeft;
     coordinate mDownLeft;
     coordinate mTopRight;
     coordinate mDownRight;
     coordinate mCenterForTower;
-    CTexture* mTexture = nullptr;
-    const std::string mPath = "tanks/";
-    const std::string mGreen = "normal_Tank_Green.png";
+    const std::string mPath;
+    const std::string mGreen;
+    const MyColor mColor;
 public:
-    CTankBody(SDL_Renderer *ren) {}
+    CTankBody(SDL_Renderer *ren);
+
+    virtual ~CTankBody();
 };
 
 

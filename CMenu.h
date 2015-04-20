@@ -13,6 +13,11 @@
 #include "CTexture.h"
 #include "Ctext.h"
 #include "coordinats.h"
+#include "CTankBody.h"
+
+class CTexture;
+class Ctext;
+class CTankBody;
 
 enum Menu {
         play,
@@ -36,6 +41,8 @@ private:
     Ctext* mTextsMenu[count];
     TextureSize mTexturesData[count];
     std::mutex mMutexRender;
+    CTankBody *mTankBody;
+
 public:
     CMenu(resolution &res);
 

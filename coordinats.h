@@ -11,6 +11,7 @@ struct coordinate {
     int x = 0;
     int y = 0;
     coordinate (int x, int y) : x(x), y(y) {}
+    coordinate() : x(0), y(0) {}
     coordinate (const coordinate & obj) {
         x = obj.x;
         y = obj.y;
@@ -19,7 +20,7 @@ struct coordinate {
 };
 
 inline std::ostream& operator<<(std::ostream & os, const coordinate & obj) {
-    return os << "x:" << x << " y:" << y;
+    return os << "x:" << obj.x << " y:" << obj.y;
 }
 
 struct TextureSize {
