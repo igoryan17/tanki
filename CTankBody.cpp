@@ -4,10 +4,11 @@
 
 #include "CTankBody.h"
 
-CTankBody::CTankBody(SDL_Renderer *ren) :
+CTankBody::CTankBody(SDL_Renderer *ren, resolution res) :
         mPath("tanks/"), mGreen("Tank_Green_Body.png"),
         mColor(55, 55, 55, 1),
-        CTexture("tanks/Tank_Green_Body.png", ren, PNG, mColor.color) {
+        CTexture("tanks/Tank_Green_Body.png", ren, PNG, mColor.color),
+        mRes(res) {
     if (!mTexture) {
         std::cout << "Pizda" << std::endl;
     }

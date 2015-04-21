@@ -3,18 +3,8 @@
 //
 
 #include "CMenu.h"
-#include <cassert>
 
-CMenu::CMenu(resolution &res) : CWindow(res) {
-    mBackground = new CTexture(mPathToBackground, mRender, JPG);
-    assert(mBackground != nullptr);
-    SDL_RenderClear(mRender);
-    mBackground->RenderTexture(mRender, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    DrawMenu();
-    mTankBody = new CTankBody(mRender);
-}
-
-CMenu::CMenu(int x, int y, resolution &res, Uint32 flags) : CWindow(x, y, res, flags) {
+CMenu::CMenu(int x, int y, resolution &res, Uint32 flags) : CWindow(x, y, res,flags) {
     CTexture *mBackground = new CTexture(mPathToBackground, mRender, JPG);
     mMutexRender.lock();
     SDL_RenderClear(mRender);
@@ -38,27 +28,6 @@ void CMenu::OnMenu(SDL_Event &Event) {
     std::cout << "OnMenu" << std::endl;
     int xMousePosition;
     int yMousePosition;
-    int i = count;
-    /*while (1) {
-        if (Event.type == SDL_MOUSEBUTTONDOWN) {
-            SDL_GetMouseState(&xMousePosition, &yMousePosition);
-            i = ProcessingMouseCoordinat(xMousePosition, yMousePosition);
-            i = play;
-            //std::cout << "X:" << xMousePosition << " Y:" << yMousePosition << std::endl;
-            if (i == play) {
-                std::cout << "play" << std::endl;
-                mMutexRender.lock();
-                SDL_RenderClear(mRender);
-                mMutexRender.unlock();
-
-                mMutexRender.lock();
-                (mTankBody->GetTexture())->RenderTexture(mRender, 0, 0);
-                mMutexRender.unlock();
-                break;
-            }
-        }
-    }*/
-    SDL_RenderClear(mRender);
 }
 
 int CMenu::ProcessingMouseCoordinat(int x, int y) {
@@ -83,8 +52,6 @@ CMenu::~CMenu() {
         std::cout << "Clear Texture" << std::endl;
         delete mBackground;
     }
-    if (mTankBody)
-        delete mTankBody;
     for (int i = 0; i < count; i++) {
         if (mTextsMenu[i] != nullptr) {
             delete mTextsMenu[i];

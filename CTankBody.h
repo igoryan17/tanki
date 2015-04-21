@@ -9,19 +9,38 @@
 #include "CTexture.h"
 #include <SDL2/SDL.h>
 #include "MyColor.h"
+#include "CWindow.h"
 
 class CTankBody : public CTexture {
 protected:
     coordinate mTopLeft;
     coordinate mDownLeft;
     coordinate mTopRight;
-    coordinate mDownRight;
     coordinate mCenterForTower;
     const std::string mPath;
     const std::string mGreen;
     const MyColor mColor;
+    resolution mRes;
 public:
-    CTankBody(SDL_Renderer *ren);
+    CTankBody(SDL_Renderer *ren, resolution res);
+
+    coordinate mDownRight = {0, 0};
+
+    void GoForward() {
+        if (mDownRight.y < mRes.Height) {
+            mDownRight.y += 1;
+        }
+    }
+
+    void GoBack() {
+        if (mDownRight.y > 0) {
+            mDownRight.y -= 1;
+        }
+    }
+
+    void Render(SDL_Renderer *ren) {
+        RenderTexture(ren, mDownRight.x, mDownRight.y);
+    }
 
     virtual ~CTankBody();
 };

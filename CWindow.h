@@ -48,8 +48,6 @@ public:
 
     void SetResolution(unsigned int w, unsigned int h);
 
-    CWindow(resolution &res);
-
     CWindow(int x, int y, resolution &res, Uint32 flags);
 
     virtual ~CWindow();

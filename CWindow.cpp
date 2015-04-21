@@ -4,32 +4,21 @@
 
 #include "CWindow.h"
 #include "CMyErrorShow.h"
-
-CWindow::CWindow(resolution &res) : SCREEN_WIDTH(800), SCREEN_HEIGHT(600), mRatio(4 / 3), mEpsilon(0.000001) {
-    res.Width = SCREEN_WIDTH;
-    res.Height = SCREEN_HEIGHT;
-    mWindow = SDL_CreateWindow("316 panzers", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if (mWindow == nullptr) {
-        CMyErrorShow::show_error("SDL_CreateWindow");
-        SDL_Quit();
-    }
-
-    Scale = (float) fabs((float)SCREEN_WIDTH / 800);
-
-    std::cout << "Scale:" << Scale << std::endl;
-
-    mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (mRender == nullptr) {
-        CMyErrorShow::show_error("SDL_CreateRenderer");
-        SDL_DestroyWindow(mWindow);
-        SDL_Quit();
-    }
-}
+#include "CInitResources.h"
 
 CWindow::CWindow(int x, int y, resolution &res, Uint32 flags) :
         mRatio(4 / 3), mEpsilon(0.000001) {
-    InitializationResolutions();
-    SetResolution(res.Width, res.Height);
+    CInitResources::SDL(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    CInitResources::IMG(IMG_INIT_JPG);
+    CInitResources::TTF();
+    if (res.Width == 0 && res.Height == 0) {
+        SCREEN_WIDTH = 800;
+        SCREEN_HEIGHT = 600;
+    }
+    else {
+        InitializationResolutions();
+        SetResolution(res.Width, res.Height);
+    }
     res.Width = SCREEN_WIDTH;
     res.Height = SCREEN_HEIGHT;
     mWindow = SDL_CreateWindow("316 panzers", x, y, SCREEN_WIDTH, SCREEN_HEIGHT, flags);

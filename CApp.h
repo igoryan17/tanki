@@ -11,37 +11,33 @@
 #include <thread>
 #include <mutex>
 #include "CWindow.h"
+#include "CTankBody.h"
 
 typedef std::thread MyThread;
 
-class CApp {
+class CApp : public CMenu {
 private:
     bool mRunning = false;
     bool mFlagThread = true;
-    CMenu *mMenu = nullptr;
-    SDL_Renderer *mRender;
     resolution mResolution;
     SDL_Event mEvent;
-    static MyThread *mEngine;
-    int mArgc = 1;
-    char **mArgv = nullptr;
+    static MyThread *mGPU;
+    CTankBody *mTankBody = nullptr;
 public:
-    CApp(int argc, char **argv);
+    CApp(resolution &res);
 
-    ~CApp();
+    virtual ~CApp();
 
-    void Engine();
+    void GPU();
 
-    void ChooseScreenResolution();
-
-    void CallEngine();
-
-    void join();
+    void CallGPU();
 
     void ShowRender();
 
-    friend class CMenu;
+    void join();
+
+    void Engine();
 };
 
-MyThread *CApp::mEngine = nullptr;
+MyThread *CApp::mGPU = nullptr;
 #endif //SDL_EXAMPLES_CAPP_H

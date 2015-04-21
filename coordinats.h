@@ -8,9 +8,9 @@
 #include <iostream>
 
 struct coordinate {
-    int x = 0;
-    int y = 0;
-    coordinate (int x, int y) : x(x), y(y) {}
+    unsigned int x = 0;
+    unsigned int y = 0;
+    coordinate (unsigned int x, unsigned int y) : x(x), y(y) {}
     coordinate() : x(0), y(0) {}
     coordinate (const coordinate & obj) {
         x = obj.x;

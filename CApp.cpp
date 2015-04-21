@@ -6,92 +6,41 @@
 #include <cstring>
 #include <cassert>
 
-CApp::CApp(int argc, char **argv) : mArgc(argc), mArgv(argv) {
+CApp::CApp(resolution &res) :
+        mResolution(res),
+        CMenu(0, 0, res, SDL_WINDOW_SHOWN) {
+    mTankBody = new CTankBody(mRender, mResolution);
     mRunning = true;
-    CInitResources::SDL(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    CInitResources::IMG(IMG_INIT_JPG);
-    CInitResources::TTF();
-    ChooseScreenResolution();
-    if (mResolution.Width > 0 && mResolution.Height > 0) {
-        mMenu = new CMenu(0, 0, mResolution, SDL_WINDOW_SHOWN);
-    }
-    else {
-        mMenu = new CMenu(mResolution);
-    }
-    mRender = mMenu->mRender;
 }
 
-void CApp::ChooseScreenResolution() {
-    SDL_DisplayMode mode;
-    if (mArgc == 2) {
-        if (SDL_GetCurrentDisplayMode(0, &mode) != 0) {
-            CMyErrorShow::show_error("SDL_GetCurrentDisplayMode");
-            return;
-        }
-    }
-    char *ptr = nullptr;
-    switch (mArgc) {
-        case 1:
-            return;
-        case 2:
-            if (strcmp("-f", mArgv[1]) != 0) {
-                std::cout << "doesn't know parametr:" << mArgv[1] << std::endl;
-                return;
-            }
-            mResolution.Width = static_cast<unsigned int>(mode.w);
-            mResolution.Height = static_cast<unsigned int>(mode.h);
-            return;
-        case 3:
-            if (strcmp("-u", mArgv[1]) != 0) {
-                std::cout << "doesn't know parametr:" << mArgv[1] << std::endl;
-            }
-            mResolution.Width = static_cast<unsigned int>(atoi(mArgv[2]));
-            ptr = strchr(mArgv[2], 'x');
-            if (ptr == nullptr) {
-                mResolution.Width = 0;
-                mResolution.Height = 0;
-                return;
-            }
-            mResolution.Height = static_cast<unsigned int>(atoi(ptr));
-            return;
-        default:
-            mResolution.Width = 0;
-            mResolution.Height = 0;
-            return;
+void CApp::ShowRender() {
+    while (mRunning) {
+        mMutexRender.lock();
+        SDL_RenderPresent(mRender);
+        mMutexRender.unlock();
     }
 }
 
-void CApp::Engine() {
-    assert(mMenu != nullptr);
-    mMenu->OnMenu(mEvent);
+void CApp::GPU() {
+    OnMenu(mEvent);
 }
 
-void CApp::CallEngine() {
+void CApp::CallGPU() {
     if (mFlagThread) {
-        mEngine = new MyThread(&CApp::Engine, this);
+        mGPU = new MyThread(&CApp::ShowRender, this);
     }
     else {
-        Engine();
+        GPU();
     }
 }
 
 void CApp::join() {
-    mEngine->join();
+    mGPU->join();
 }
 
-void CApp::ShowRender() {
-    assert(mMenu != nullptr);
+void CApp::Engine() {
     assert(mRender != nullptr);
-    SDL_PollEvent(&mEvent);
-        if (mEvent.type == SDL_QUIT) {
-            SDL_Quit();
-            SDL_RenderClear(mRender);
-            mRunning = false;
-            return;
-        }
-        else {
-            CallEngine();
-        }
+    CallGPU();
     while (mRunning) {
         while (SDL_PollEvent(&mEvent) != 0) {
             if (mEvent.type == SDL_QUIT) {
@@ -100,12 +49,21 @@ void CApp::ShowRender() {
                 mRunning = false;
                 return;
             }
-            mMenu->mMutexRender.lock();
+            switch (mEvent.key.keysym.sym) {
+                case SDLK_UP:
+                    mTankBody->GoForward();
+                    break;
+                case SDLK_DOWN:
+                    mTankBody->GoBack();
+                    break;
+                default:
+                    break;
+            }
+            mMutexRender.lock();
             SDL_RenderClear(mRender);
-            mMenu->mTankBody->RenderTexture(mRender, 0 , 0);
+            mTankBody->Render(mRender);
             SDL_RenderPresent(mRender);
-            mMenu->mMutexRender.unlock();
-            SDL_Delay(50);
+            mMutexRender.unlock();
         }
     }
     SDL_Quit();
@@ -114,13 +72,59 @@ void CApp::ShowRender() {
 CApp::~CApp() {
     std::cout << "~CApp" << std::endl;
     while (mRunning);
-    delete mEngine;
-    delete mMenu;
+    if (mGPU)
+        delete mGPU;
+    if (mTankBody)
+        delete mTankBody;
 }
 
+resolution ChooseResolution(const int &argc, const char** argv);
+
 int main(int argc, char *argv[]) {
-    CApp TheApp(argc, argv);
-    TheApp.ShowRender();
+    resolution res = ChooseResolution(argc, (char const **) argv);
+    CApp TheApp(res);
+    TheApp.Engine();
     TheApp.join();
     return 0;
+}
+
+resolution ChooseResolution(const int &argc, const char** argv) {
+    SDL_DisplayMode mode;
+    resolution res;
+    if (argc == 2) {
+        if (SDL_GetCurrentDisplayMode(0, &mode) != 0) {
+            CMyErrorShow::show_error("SDL_GetCurrentDisplayMode");
+            return res;
+        }
+    }
+    char *ptr = nullptr;
+    switch (argc) {
+        case 1:
+            return res;
+        case 2:
+            if (strcmp("-f", argv[1]) != 0) {
+                std::cout << "doesn't know parametr:" << argv[1] << std::endl;
+                return res;
+            }
+            res.Width = static_cast<unsigned int>(mode.w);
+            res.Height = static_cast<unsigned int>(mode.h);
+            return res;
+        case 3:
+            if (strcmp("-u", argv[1]) != 0) {
+                std::cout << "doesn't know parametr:" << argv[1] << std::endl;
+            }
+            res.Width = static_cast<unsigned int>(atoi(argv[2]));
+            ptr = (char *) strchr(argv[2], 'x');
+            if (ptr == nullptr) {
+                res.Width = 0;
+                res.Height = 0;
+                return res;
+            }
+            res.Height = static_cast<unsigned int>(atoi(ptr));
+            return res;
+        default:
+            res.Width = 0;
+            res.Height = 0;
+            return res;
+    }
 }

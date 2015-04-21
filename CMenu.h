@@ -17,7 +17,6 @@
 
 class CTexture;
 class Ctext;
-class CTankBody;
 
 enum Menu {
         play,
@@ -30,7 +29,7 @@ enum Menu {
 
 
 class CMenu : public CWindow {
-private:
+protected:
     CTexture *mBackground = nullptr;
     const std::string mGameName = "316 Panzers";
     const std::string mFontPath = "Text/Comfortaa_Bold.ttf";
@@ -41,10 +40,7 @@ private:
     Ctext* mTextsMenu[count];
     TextureSize mTexturesData[count];
     std::mutex mMutexRender;
-    CTankBody *mTankBody;
-
 public:
-    CMenu(resolution &res);
 
     CMenu(int x, int y, resolution &res, Uint32 flags);
 
