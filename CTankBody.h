@@ -17,9 +17,9 @@ protected:
     coordinate mDownLeft;
     coordinate mTopRight;
     coordinate mCenterForTower;
-    const std::string mPath;
-    const std::string mGreen;
-    const MyColor mColor;
+    const std::string mPath = "tanks/";
+    const std::string mGreen = "Tank_Green_Body.png";
+    MyColor mColor = {55, 55, 55, 1};
     resolution mRes;
 public:
     CTankBody(SDL_Renderer *ren, resolution res);

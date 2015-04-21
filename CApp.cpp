@@ -53,7 +53,13 @@ void CApp::Engine() {
                 case SDLK_UP:
                     mTankBody->GoForward();
                     break;
+                case SDLK_w:
+                    mTankBody->GoForward();
+                    break;
                 case SDLK_DOWN:
+                    mTankBody->GoBack();
+                    break;
+                case SDLK_s:
                     mTankBody->GoBack();
                     break;
                 default:

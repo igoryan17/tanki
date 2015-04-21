@@ -19,7 +19,7 @@ class CApp : public CMenu {
 private:
     bool mRunning = false;
     bool mFlagThread = true;
-    resolution mResolution;
+    resolution &mResolution;
     SDL_Event mEvent;
     static MyThread *mGPU;
     CTankBody *mTankBody = nullptr;
