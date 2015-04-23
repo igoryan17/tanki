@@ -19,12 +19,12 @@ class CApp : public CMenu {
 private:
     bool mRunning = false;
     bool mFlagThread = true;
-    resolution &mResolution;
+    SDL_Point &mResolution;
     SDL_Event mEvent;
     static MyThread *mGPU;
     CTankBody *mTankBody = nullptr;
 public:
-    CApp(resolution &res);
+    CApp(SDL_Point &res);
 
     virtual ~CApp();
 

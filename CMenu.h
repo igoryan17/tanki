@@ -12,7 +12,6 @@
 #include <mutex>
 #include "CTexture.h"
 #include "Ctext.h"
-#include "coordinats.h"
 #include "CTankBody.h"
 
 class CTexture;
@@ -38,11 +37,10 @@ protected:
     const std::string mPathToBackground = "menu_images/menu_background.jpg";
     const std::string mTexts[count] = {"play", "options", "credits", "exit"};
     Ctext* mTextsMenu[count];
-    TextureSize mTexturesData[count];
+    SDL_Point mTexturesData[count];
     std::mutex mMutexRender;
 public:
-
-    CMenu(int x, int y, resolution &res, Uint32 flags);
+    CMenu(SDL_Point &res, Uint32 flags);
 
     virtual ~CMenu();
 

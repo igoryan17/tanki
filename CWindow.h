@@ -12,27 +12,6 @@
 #include <iostream>
 #include "cleanup.h"
 
-struct resolution {
-    unsigned int Width;
-    unsigned int Height;
-
-    resolution() : Width(0), Height(0) { }
-
-    resolution(unsigned int W, unsigned int H) : Width(W), Height(H) { }
-
-    resolution(const resolution &obj) {
-        Width = obj.Width;
-        Height = obj.Height;
-    }
-
-    friend std::ostream &operator<<(std::ostream &os, const resolution res);
-};
-
-inline std::ostream &operator<<(std::ostream &os, const resolution res) {
-    os << res.Width << "x" << res.Height;
-    return os;
-}
-
 class CWindow {
 protected:
     unsigned int SCREEN_WIDTH;
@@ -41,14 +20,15 @@ protected:
     SDL_Renderer *mRender = nullptr;
     const float mRatio;
     const float mEpsilon;
+    const SDL_Point mLeftUpWindowAngle = {0, 0};
 private:
-    std::vector<resolution> mResolutions;
+    std::vector<SDL_Point> mResolutions;
 public:
     void InitializationResolutions();
 
     void SetResolution(unsigned int w, unsigned int h);
 
-    CWindow(int x, int y, resolution &res, Uint32 flags);
+    CWindow(SDL_Point &res, Uint32 flags);
 
     virtual ~CWindow();
 

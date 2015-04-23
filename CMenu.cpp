@@ -4,7 +4,7 @@
 
 #include "CMenu.h"
 
-CMenu::CMenu(int x, int y, resolution &res, Uint32 flags) : CWindow(x, y, res,flags) {
+CMenu::CMenu(SDL_Point &res, Uint32 flags) : CWindow(res, flags) {
     CTexture *mBackground = new CTexture(mPathToBackground, mRender, JPG);
     mMutexRender.lock();
     SDL_RenderClear(mRender);
@@ -18,9 +18,9 @@ void CMenu::DrawMenu() {
         int y = (int) (50 * Scale + i * 40 * Scale);
         mTextsMenu[i] = new Ctext(mTexts[i], mFontPath, mColor, mTextSize, mRender);
         mTextsMenu[i]->RenderTexture(mRender, SCREEN_WIDTH / 2, y);
-        SDL_QueryTexture(mTextsMenu[i]->mTexture, NULL, NULL, &mTexturesData[i].W, &mTexturesData[i].H);
-        mTexturesData[i].X = SCREEN_WIDTH / 2;
-        mTexturesData[i].Y = y;
+        SDL_QueryTexture(mTextsMenu[i]->mTexture, NULL, NULL, &mTexturesData[i].x, &mTexturesData[i].y);
+        mTexturesData[i].x = SCREEN_WIDTH / 2;
+        mTexturesData[i].y = y;
     }
 }
 
@@ -35,8 +35,8 @@ int CMenu::ProcessingMouseCoordinat(int x, int y) {
     for (int i = 0; i < count; i++) {
         bool lies = false;
         //std::cout << mTexturesData[i] << std::endl << std::endl;
-        if (mTexturesData[i].X <= x && x <= (mTexturesData[i].X + mTexturesData[i].W) &&
-                mTexturesData[i].Y <= y && y <= (mTexturesData[i].Y + mTexturesData[i].H))
+        if (mTexturesData[i].x <= x && x <= (mTexturesData[i].x + mTexturesData[i].x) &&
+                mTexturesData[i].y <= y && y <= (mTexturesData[i].y + mTexturesData[i].y))
             lies = true;
         //std::cout << "lies:" << lies << std::endl;
         if (lies) {

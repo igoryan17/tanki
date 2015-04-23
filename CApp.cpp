@@ -6,10 +6,10 @@
 #include <cstring>
 #include <cassert>
 
-CApp::CApp(resolution &res) :
+CApp::CApp(SDL_Point &res) :
         mResolution(res),
-        CMenu(0, 0, res, SDL_WINDOW_SHOWN) {
-    mTankBody = new CTankBody(mRender, mResolution);
+        CMenu(res, SDL_WINDOW_SHOWN) {
+    mTankBody = new CTankBody(mRender, res);
     mRunning = true;
 }
 
@@ -42,7 +42,7 @@ void CApp::Engine() {
     assert(mRender != nullptr);
     CallGPU();
     while (mRunning) {
-        while (SDL_PollEvent(&mEvent) != 0) {
+        while (SDL_WaitEvent(&mEvent) == 1) {
             if (mEvent.type == SDL_QUIT) {
                 SDL_Quit();
                 SDL_RenderClear(mRender);
@@ -84,19 +84,19 @@ CApp::~CApp() {
         delete mTankBody;
 }
 
-resolution ChooseResolution(const int &argc, const char** argv);
+SDL_Point ChooseResolution(const int &argc, const char** argv);
 
 int main(int argc, char *argv[]) {
-    resolution res = ChooseResolution(argc, (char const **) argv);
+    SDL_Point res = ChooseResolution(argc, (char const **) argv);
     CApp TheApp(res);
     TheApp.Engine();
     TheApp.join();
     return 0;
 }
 
-resolution ChooseResolution(const int &argc, const char** argv) {
+SDL_Point ChooseResolution(const int &argc, const char** argv) {
     SDL_DisplayMode mode;
-    resolution res;
+    SDL_Point res = {0 , 0};
     if (argc == 2) {
         if (SDL_GetCurrentDisplayMode(0, &mode) != 0) {
             CMyErrorShow::show_error("SDL_GetCurrentDisplayMode");
@@ -112,25 +112,25 @@ resolution ChooseResolution(const int &argc, const char** argv) {
                 std::cout << "doesn't know parametr:" << argv[1] << std::endl;
                 return res;
             }
-            res.Width = static_cast<unsigned int>(mode.w);
-            res.Height = static_cast<unsigned int>(mode.h);
+            res.x = static_cast<unsigned int>(mode.w);
+            res.y = static_cast<unsigned int>(mode.h);
             return res;
         case 3:
             if (strcmp("-u", argv[1]) != 0) {
                 std::cout << "doesn't know parametr:" << argv[1] << std::endl;
             }
-            res.Width = static_cast<unsigned int>(atoi(argv[2]));
+            res.x = static_cast<unsigned int>(atoi(argv[2]));
             ptr = (char *) strchr(argv[2], 'x');
             if (ptr == nullptr) {
-                res.Width = 0;
-                res.Height = 0;
+                res.x = 0;
+                res.y = 0;
                 return res;
             }
-            res.Height = static_cast<unsigned int>(atoi(ptr));
+            res.y = static_cast<unsigned int>(atoi(ptr));
             return res;
         default:
-            res.Width = 0;
-            res.Height = 0;
+            res.x = 0;
+            res.y = 0;
             return res;
     }
 }

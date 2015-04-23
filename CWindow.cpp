@@ -6,22 +6,27 @@
 #include "CMyErrorShow.h"
 #include "CInitResources.h"
 
-CWindow::CWindow(int x, int y, resolution &res, Uint32 flags) :
+CWindow::CWindow(SDL_Point &res, Uint32 flags) :
         mRatio(4 / 3), mEpsilon(0.000001) {
     CInitResources::SDL(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     CInitResources::IMG(IMG_INIT_JPG);
     CInitResources::TTF();
-    if (res.Width == 0 && res.Height == 0) {
+    if (res.x == 0 && res.y == 0) {
         SCREEN_WIDTH = 800;
         SCREEN_HEIGHT = 600;
     }
     else {
         InitializationResolutions();
-        SetResolution(res.Width, res.Height);
+        SetResolution(res.x, res.y);
     }
-    res.Width = SCREEN_WIDTH;
-    res.Height = SCREEN_HEIGHT;
-    mWindow = SDL_CreateWindow("316 panzers", x, y, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+    res.x = SCREEN_WIDTH;
+    res.y = SCREEN_HEIGHT;
+    mWindow = SDL_CreateWindow("316 panzers",
+                               mLeftUpWindowAngle.x,
+                               mLeftUpWindowAngle.y,
+                               SCREEN_WIDTH,
+                               SCREEN_HEIGHT,
+                               flags);
     if (mWindow == nullptr) {
         CMyErrorShow::show_error("SDL_CreateWindow");
         SDL_Quit();
@@ -39,34 +44,34 @@ CWindow::CWindow(int x, int y, resolution &res, Uint32 flags) :
 }
 
 void CWindow::InitializationResolutions() {
-    resolution res;
+    SDL_Point res;
 
-    res.Width = 640;
-    res.Height = 480;
+    res.x = 640;
+    res.y = 480;
     mResolutions.push_back(res);
 
-    res.Width = 800;
-    res.Height = 600;
+    res.x = 800;
+    res.y = 600;
     mResolutions.push_back(res);
 
-    res.Width = 1024;
-    res.Height = 768;
+    res.x = 1024;
+    res.y = 768;
     mResolutions.push_back(res);
 
-    res.Width = 1152;
-    res.Height = 864;
+    res.x = 1152;
+    res.y = 864;
     mResolutions.push_back(res);
 
-    res.Width = 1280;
-    res.Height = 960;
+    res.x = 1280;
+    res.y = 960;
     mResolutions.push_back(res);
 
-    res.Width = 1400;
-    res.Height = 1050;
+    res.x = 1400;
+    res.y = 1050;
     mResolutions.push_back(res);
 
-    res.Width = 1600;
-    res.Height = 1200;
+    res.x = 1600;
+    res.y = 1200;
     mResolutions.push_back(res);
 }
 
@@ -86,11 +91,11 @@ void CWindow::SetResolution(unsigned int w, unsigned int h) {
         print_resolution();
         return;
     }
-    std::vector<resolution>::iterator i;
+    std::vector<SDL_Point>::iterator i;
     for (i = mResolutions.begin(); i < mResolutions.end(); i++) {
-        if (w >= (*i).Width && h >= (*i).Height) {
-            SCREEN_WIDTH = (*i).Width;
-            SCREEN_HEIGHT = (*i).Height;
+        if (w >= (*i).x && h >= (*i).y) {
+            SCREEN_WIDTH = (unsigned int) (*i).x;
+            SCREEN_HEIGHT = (unsigned int) (*i).y;
         }
         else {
             i = mResolutions.end();
