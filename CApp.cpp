@@ -9,67 +9,91 @@
 CApp::CApp(SDL_Point &res) :
         mResolution(res),
         CMenu(res, SDL_WINDOW_SHOWN) {
-    mTankBody = new CTankBody(mRender, res);
+    SDL_Point SpawnTank = {100, 100};
+    mTankBody = new CTankBody(SpawnTank, mRender, res, mRunning);
     mRunning = true;
 }
 
 void CApp::ShowRender() {
+    mMutexRender.lock();
+    std::cout << "GPU mRender:" << mRender << std::endl;
+    mMutexRender.unlock();
     while (mRunning) {
-        mMutexRender.lock();
-        SDL_RenderPresent(mRender);
-        mMutexRender.unlock();
+        SDL_GetMouseState(&mMousePosition.x, &mMousePosition.y);
+        while (SDL_PollEvent(&mEvent)) {
+            SDL_Keycode KeyTemp = mEvent.key.keysym.sym;
+            mKey.push(KeyTemp);
+            Uint32 TypeTemp = mEvent.type;
+            if (TypeTemp == SDL_QUIT) {
+                mType.push(TypeTemp);
+            }
+            SDL_RenderPresent(mRender);
+            SDL_RenderClear(mRender);
+            mTankBody->Render(mRender);
+            SDL_Delay(10);
+        }
     }
 }
 
-void CApp::GPU() {
-    OnMenu(mEvent);
-}
-
-void CApp::CallGPU() {
+void CApp::CallEngine() {
     if (mFlagThread) {
-        mGPU = new MyThread(&CApp::ShowRender, this);
+        mEngine = new MyThread(&CApp::Engine, this);
     }
     else {
-        GPU();
+        Engine();
     }
 }
 
 void CApp::join() {
-    mGPU->join();
+    mEngine->join();
 }
 
 void CApp::Engine() {
     assert(mRender != nullptr);
-    CallGPU();
+    mMutexRender.lock();
+    std::cout << "Engine mRender:" << mRender << std::endl;
+    mMutexRender.unlock();
     while (mRunning) {
-        while (SDL_WaitEvent(&mEvent) == 1) {
-            if (mEvent.type == SDL_QUIT) {
+        if (mType.size() > 0) {
+            if (mType.front() == SDL_QUIT) {
                 SDL_Quit();
+                mType.pop();
                 SDL_RenderClear(mRender);
                 mRunning = false;
                 return;
             }
-            switch (mEvent.key.keysym.sym) {
+            else {
+                mType.pop();
+            }
+        }
+        if (mKey.size() > 0) {
+            switch (mKey.front()) {
                 case SDLK_UP:
+                    mKey.pop();
                     mTankBody->GoForward();
                     break;
                 case SDLK_w:
+                    mKey.pop();
                     mTankBody->GoForward();
                     break;
                 case SDLK_DOWN:
+                    mKey.pop();
                     mTankBody->GoBack();
                     break;
                 case SDLK_s:
+                    mKey.pop();
                     mTankBody->GoBack();
                     break;
+                case SDLK_a:
+                    mTankBody->left();
+                    break;
+                case SDLK_d:
+                    mTankBody->right();
+                    break;
                 default:
+                    mKey.pop();
                     break;
             }
-            mMutexRender.lock();
-            SDL_RenderClear(mRender);
-            mTankBody->Render(mRender);
-            SDL_RenderPresent(mRender);
-            mMutexRender.unlock();
         }
     }
     SDL_Quit();
@@ -78,25 +102,26 @@ void CApp::Engine() {
 CApp::~CApp() {
     std::cout << "~CApp" << std::endl;
     while (mRunning);
-    if (mGPU)
-        delete mGPU;
+    if (mEngine)
+        delete mEngine;
     if (mTankBody)
         delete mTankBody;
 }
 
-SDL_Point ChooseResolution(const int &argc, const char** argv);
+SDL_Point ChooseResolution(const int &argc, const char **argv);
 
 int main(int argc, char *argv[]) {
     SDL_Point res = ChooseResolution(argc, (char const **) argv);
     CApp TheApp(res);
-    TheApp.Engine();
+    TheApp.CallEngine();
+    TheApp.ShowRender();
     TheApp.join();
     return 0;
 }
 
-SDL_Point ChooseResolution(const int &argc, const char** argv) {
+SDL_Point ChooseResolution(const int &argc, const char **argv) {
     SDL_DisplayMode mode;
-    SDL_Point res = {0 , 0};
+    SDL_Point res = {0, 0};
     if (argc == 2) {
         if (SDL_GetCurrentDisplayMode(0, &mode) != 0) {
             CMyErrorShow::show_error("SDL_GetCurrentDisplayMode");

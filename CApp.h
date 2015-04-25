@@ -12,6 +12,7 @@
 #include <mutex>
 #include "CWindow.h"
 #include "CTankBody.h"
+#include <queue>
 
 typedef std::thread MyThread;
 
@@ -21,16 +22,17 @@ private:
     bool mFlagThread = true;
     SDL_Point &mResolution;
     SDL_Event mEvent;
-    static MyThread *mGPU;
+    static MyThread *mEngine;
     CTankBody *mTankBody = nullptr;
+    std::queue<SDL_Keycode> mKey;
+    std::queue<Uint32> mType;
+    SDL_Point mMousePosition;
 public:
     CApp(SDL_Point &res);
 
     virtual ~CApp();
 
-    void GPU();
-
-    void CallGPU();
+    void CallEngine();
 
     void ShowRender();
 
@@ -39,5 +41,5 @@ public:
     void Engine();
 };
 
-MyThread *CApp::mGPU = nullptr;
+MyThread *CApp::mEngine = nullptr;
 #endif //SDL_EXAMPLES_CAPP_H

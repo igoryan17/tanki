@@ -15,6 +15,9 @@ endif()
 
 set(SOURCE_FILES CApp.cpp)
 
+find_package( Boost REQUIRED COMPONENTS program_options regex )
+include_directories( ${Boost_INCLUDE_DIRS} )
+
 add_executable(tanki ${SOURCE_FILES} CApp.cpp CApp.h
 									CInitResources.cpp CInitResources.h
 									cleanup.h
@@ -28,6 +31,8 @@ add_executable(tanki ${SOURCE_FILES} CApp.cpp CApp.h
 									CTankBody.cpp CTankBody.h
 									CTurret.cpp CTurret.h)
 
+
+target_link_libraries( tanki ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_REGEX_LIBRARY} )
 #target_link_libraries(SDL_examples ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY})
 
 #INCLUDE(FindPkgConfig)
@@ -44,7 +49,5 @@ PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image)
 PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer)
 PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf)
-PKG_SEARCH_MODULE(SDL2GFX REQUIRED SDL2_gfx)
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2MIXER_LIBRARIES} ${SDL2TTF_LIBRARIES}
-${SDL2GFX_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2MIXER_LIBRARIES} ${SDL2TTF_LIBRARIES})

@@ -8,8 +8,9 @@
 const std::string RenderNull = "Error render is nullptr";
 
 CTexture::CTexture(std::string path, SDL_Renderer *render, int flag) {
+    mRen = render;
     if (render) {
-        mTexture = CTexture::LoadTexture(path, render, flag);
+        mTexture = LoadTexture(path, render, flag);
     }
     else {
         mTexture = nullptr;
@@ -19,6 +20,7 @@ CTexture::CTexture(std::string path, SDL_Renderer *render, int flag) {
 
 CTexture::CTexture(const std::string &message, const std::string &fontFile, SDL_Color color, int fontSize,
                    SDL_Renderer *renderer) {
+    mRen = renderer;
     TTF_Font *font = TTF_OpenFont(fontFile.c_str(), fontSize);
     if (font == nullptr) {
         mTexture = nullptr;
@@ -46,6 +48,7 @@ CTexture::CTexture(const std::string &message, const std::string &fontFile, SDL_
 CTexture::CTexture(std::string path, SDL_Renderer *render, int flag, SDL_Color color) {
     assert(render!= nullptr);
     mTexture = nullptr;
+    mRen = render;
     SDL_Surface *temp;
     temp = LoadSurface(path, flag);
     if (temp) {
@@ -88,6 +91,21 @@ void CTexture::RenderTexture(SDL_Renderer *ren, int x, int y, int w, int h) {
     if (SDL_RenderCopy(ren, mTexture, NULL, &dst) != 0) {
         CMyErrorShow::show_error("SDL_RenderCopy");
     }
+}
+
+void CTexture::RenderTexture(int x, int y, SDL_Rect *clip, float angle, SDL_Point *center, SDL_RendererFlip flip) {
+    //Set rendering space and render to screen
+    SDL_Rect renderQuad = { x, y, mWidth, mHeight };
+
+    //Set clip rendering dimensions
+    if( clip != NULL )
+    {
+        renderQuad.w = clip->w;
+        renderQuad.h = clip->h;
+    }
+
+    //Render to screen
+    SDL_RenderCopyEx( mRen, mTexture, clip, &renderQuad, angle, center, flip );
 }
 
 CTexture::~CTexture() {

@@ -20,6 +20,9 @@ enum type {
 class CTexture {
 protected:
         SDL_Texture *mTexture = nullptr;
+        int mWidth;
+        int mHeight;
+        SDL_Renderer *mRen;
 public:
     friend class CMenu;
 
@@ -36,9 +39,12 @@ public:
 
     void RenderTexture(SDL_Renderer *ren, int x, int y);
 
+    void RenderTexture(int x, int y, SDL_Rect* clip = NULL, float angle = 0.0, SDL_Point* center = NULL,
+                       SDL_RendererFlip flip = SDL_FLIP_NONE);
+
     void RenderTexture(SDL_Renderer *ren, int x, int y, int w, int h);
 
-    static SDL_Texture *LoadTexture(std::string path, SDL_Renderer *render, int flag) {
+    SDL_Texture *LoadTexture(std::string path, SDL_Renderer *render, int flag) {
         SDL_Surface *Load = nullptr;
         switch (flag) {
             case BMP:
@@ -54,6 +60,9 @@ public:
                 std::cout << "Error load flag\n";
                 return nullptr;
         }
+        if (Load == nullptr)
+            return nullptr;
+        std::cout << "mWidth:" << mWidth << " mHeight:" << mHeight << std::endl;
         SDL_Texture *Texture_ret = SDL_CreateTextureFromSurface(render, Load);
         SDL_FreeSurface(Load);
         if (Texture_ret == nullptr) {

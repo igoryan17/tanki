@@ -33,7 +33,7 @@ protected:
     const std::string mGameName = "316 Panzers";
     const std::string mFontPath = "Text/Comfortaa_Bold.ttf";
     const SDL_Color mColor = {168, 12, 12, 1};
-    const int mTextSize = (int const) (32 * Scale);
+    const int mTextSize = (int const) (32 * mScaleX);
     const std::string mPathToBackground = "menu_images/menu_background.jpg";
     const std::string mTexts[count] = {"play", "options", "credits", "exit"};
     Ctext* mTextsMenu[count];

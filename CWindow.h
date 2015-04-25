@@ -21,6 +21,8 @@ protected:
     const float mRatio;
     const float mEpsilon;
     const SDL_Point mLeftUpWindowAngle = {0, 0};
+    float mScaleX;
+    float mScaleY;
 private:
     std::vector<SDL_Point> mResolutions;
 public:
@@ -30,9 +32,13 @@ public:
 
     CWindow(SDL_Point &res, Uint32 flags);
 
-    virtual ~CWindow();
+    void PrintScale() {
+        std::cout << "Scale x:" << mScaleX
+        << "Scale y:" << mScaleY
+        << std::endl;
+    }
 
-    float Scale = 1.0;
+    virtual ~CWindow();
 };
 
 

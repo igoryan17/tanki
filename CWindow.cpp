@@ -32,8 +32,8 @@ CWindow::CWindow(SDL_Point &res, Uint32 flags) :
         SDL_Quit();
     }
 
-    Scale = (float) fabs((float)SCREEN_WIDTH / 800);
-    std::cout << "Scale:" << Scale << std::endl;
+    mScaleX = SCREEN_WIDTH / 800;
+    mScaleY = SCREEN_HEIGHT / 600;
 
     mRender = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (mRender == nullptr) {

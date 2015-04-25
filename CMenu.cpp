@@ -15,7 +15,7 @@ CMenu::CMenu(SDL_Point &res, Uint32 flags) : CWindow(res, flags) {
 
 void CMenu::DrawMenu() {
     for (int i = 0; i < count; i++) {
-        int y = (int) (50 * Scale + i * 40 * Scale);
+        int y = (int) (50 * mScaleY + i * 40 * mScaleY);
         mTextsMenu[i] = new Ctext(mTexts[i], mFontPath, mColor, mTextSize, mRender);
         mTextsMenu[i]->RenderTexture(mRender, SCREEN_WIDTH / 2, y);
         SDL_QueryTexture(mTextsMenu[i]->mTexture, NULL, NULL, &mTexturesData[i].x, &mTexturesData[i].y);
